@@ -36,5 +36,5 @@ public class mainExtensionCatcher extends Extension {
   @Override 
   public String getName(){
     return "mainExtensionCatcher";
-  }
+  } 
 }
