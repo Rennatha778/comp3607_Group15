@@ -4,15 +4,20 @@ import bluej.extensions2.*;
 import bluej.extensions2.event.*;
 import java.net.URL;
 
+
 public class TelDataCollection extends Extension implements CompileListener {
   private long startTime;
   private BlueJ bluejInstance;
+
   @Override 
   public void startup(BlueJ bluej){
     this.bluejInstance = bluej;
     bluej.addCompileListener(this);
     System.out.println("CompileTimerExtension started successfully.");
-  }
+  } 
+
+  
+
   @Override 
   public void terminate(){
     if (bluejInstance != null){
@@ -33,7 +38,7 @@ public class TelDataCollection extends Extension implements CompileListener {
 
   @Override 
   public void compileError(CompileEvent event){
-
+    
   }
 
   @Override 
@@ -48,16 +53,16 @@ public class TelDataCollection extends Extension implements CompileListener {
 
   @Override 
   public boolean isCompatible(){
-    return false;
+    return true;
   }
 
   @Override 
   public String getVersion(){
-    return "";
+    return "1.0";
   }
 
   @Override 
   public String getName(){
-    return "";
+    return "TelDataCollection";
   }
 }
