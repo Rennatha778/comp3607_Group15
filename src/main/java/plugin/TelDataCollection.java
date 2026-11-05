@@ -5,7 +5,7 @@ import bluej.extensions2.event.*;
 import java.net.URL;
 
 
-public class TelDataCollection implements CompileListener {
+public class TelDataCollection implements CompileListener, ExtensionEvent {
   
 
   @Override 
