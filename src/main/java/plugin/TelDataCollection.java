@@ -1,21 +1,42 @@
 package plugin;
 
+import bluej.BlueJEventListener;
 import bluej.extensions2.*;
 import bluej.extensions2.event.*;
 import java.net.URL;
 
 
-public class TelDataCollection implements CompileListener, ExtensionEvent {
+public class TelDataCollection implements CompileListener, BluejListeners {
+  int numCompileFailed = 0;
+  int numCompileSuccessful = 0;
+  long startTime = 0;
+  long endTime = 0;
+  long totalCompileTime = 0;
+
   
+  public Data getData(){
+    Data d = new Data();
+    d.addLongData("totalCompileTime", totalCompileTime);
+    d.addIntData("numCompileFailed", numCompileFailed);
+    d.addIntData("numCompileSuccessful", numCompileSuccessful);
+    d.addLongData("averageCompileTime",totalCompileTime/(numCompileFailed + numCompileSuccessful));
+
+    return d;
+  }
 
   @Override 
   public void compileStarted(CompileEvent event){
+    startTime = System.currentTimeMillis();
     System.out.println("Compile started successfully.");
+    
   }
 
   @Override 
   public void compileFailed(CompileEvent event){
     System.out.println("Compile failed.");
+    endTime = System.currentTimeMillis();
+    totalCompileTime = totalCompileTime + (endTime - startTime);
+    numCompileFailed++;
   }
 
   @Override 
@@ -28,6 +49,9 @@ public class TelDataCollection implements CompileListener, ExtensionEvent {
   @Override 
   public void compileSucceeded(CompileEvent event){
      System.out.println("Compile successful.");
+     endTime = System.currentTimeMillis();
+     totalCompileTime = totalCompileTime + (endTime - startTime);
+     numCompileSuccessful++;
   }
 
   @Override 

@@ -1,32 +1,92 @@
 package plugin;
 
+import bluej.BlueJEventListener;
 import bluej.extensions2.*;
 import bluej.extensions2.event.*;
 import java.net.URL;
-public class mainExtensionCatcher extends Extension implements ExtensionEventListener {
-  private long startTime;
-  private BlueJ bluejInstance;
-  
-  @Override
-  public void eventOccurred(ExtensionEvent event){
-    System.out.println("Event occurred:"+event.getClass().getName());
-  }
+import java.net.http.WebSocket.Listener;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
+public  class mainExtensionCatcher extends Extension implements ExtensionEventListener, BluejListeners {
+  private long startTime;
+  private long endTime;
+  private BlueJ bluejInstance;
+  private TelDataCollection compileListner;
+  private classDataCollection classListner;
+  private InvocationFinishedDataCollection invokeListner;
+  private projectDataCollection packageListner;
+  private long totalIdleTime = 0;
+  private long prevEvent = 0;
+  private long currentEvent = 0;
+  
   @Override 
   public void startup(BlueJ bluej){
+    startTime = System.currentTimeMillis();
+    prevEvent = startTime;
     this.bluejInstance = bluej;
+    compileListner = new TelDataCollection();
+    classListner = new classDataCollection();
+    packageListner = new projectDataCollection();
+    invokeListner = new InvocationFinishedDataCollection();
+    
+    
     bluejInstance.addExtensionEventListener(this);
-    //bluej.addCompileListener(this);
+    bluejInstance.addCompileListener(compileListner);
+    bluejInstance.addClassListener(classListner);
+    bluejInstance.addPackageListener(packageListner);
+    bluejInstance.addInvocationFinishedListener(invokeListner);
     System.out.println("Extension started successfully.");
   } 
+
+  @Override
+  public void eventOccurred(ExtensionEvent event){
+    currentEvent = System.currentTimeMillis();
+    System.out.println("Event occurred:"+event.getClass().getSimpleName());
+    if((currentEvent - prevEvent) > 60000){
+      totalIdleTime = totalIdleTime + (currentEvent - prevEvent);
+    }
+    prevEvent = currentEvent;
+  }
 
 
   @Override 
   public void terminate(){
-    /* if (bluejInstance != null){
-      bluejInstance.removeCompileListener(this);
-    } */
+    endTime = System.currentTimeMillis();
+    
+    TreeMap<String,Data> tr = new TreeMap<String,Data>();
+    tr.put("packageListner",packageListner.getData());
+    tr.put("classListner",classListner.getData());
+    tr.put("compileListner",compileListner.getData());
+    tr.put("invokeListner",invokeListner.getData());
+    tr.put("main extension listener",this.getData());
+
+    generateReport(tr);
+
+    if (bluejInstance != null){
+      //bluejInstance.removeExtensionEventListener(this);
+      bluejInstance.removePackageListener(packageListner);
+      bluejInstance.removeClassListener(classListner);
+      bluejInstance.removeCompileListener(compileListner);
+      bluejInstance.removeInvocationFinishedListener(invokeListner);
+    }
+
     System.out.println("Extension terminated.");
+    System.out.println("Total sesstion time: "+ (endTime-startTime));
+    System.out.println("Total Idle time: "+totalIdleTime);
+    System.out.println("Total active time: "+((endTime-startTime) - totalIdleTime));
+    //generateReport();
+  }
+
+  public void generateReport(TreeMap<String,Data> tr){
+    ReportPublisher rp = new CreatingJSONFile();
+    //ReportPublisher jp = new CreatingPDFFile();
+
+    rp.generateReport(tr);
+    //jp.generateReport();
+
+    System.out.println("Report generated");
+
   }
 
   @Override 
@@ -43,4 +103,17 @@ public class mainExtensionCatcher extends Extension implements ExtensionEventLis
   public String getName(){
     return "mainExtensionCatcher";
   } 
+  public long getTotalSessionTime(){
+    if(this.endTime != 0 && this.startTime != 0)
+      return this.endTime - this.startTime;
+    return 0;
+  }
+
+  public Data getData(){
+    Data d = new Data();
+    d.addLongData("totalSessionTime",getTotalSessionTime());
+    d.addLongData("totalActiveTime",(getTotalSessionTime() - totalIdleTime));
+    d.addLongData("totalIdleTime",totalIdleTime);
+    return d;
+  }
 }

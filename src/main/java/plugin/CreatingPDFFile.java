@@ -6,6 +6,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 import java.io.IOException;
+import java.util.TreeMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
@@ -18,7 +19,11 @@ import java.io.File;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-public class CreatingPDFFile {
+public class CreatingPDFFile implements ReportPublisher {
+  public void generateReport(TreeMap<String,Data> tr){
+
+  }
+  
   public static void main(String[] args) {
     try (PDDocument document = new PDDocument()) {
 
