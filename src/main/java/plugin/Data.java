@@ -1,7 +1,7 @@
 package plugin;
 import java.util.TreeMap;
 
-public class Data {
+public class Data{
   TreeMap<String,Long> longData;
   TreeMap<String,Integer> intData;
 

@@ -33,5 +33,6 @@ import bluej.extensions2.event.InvocationFinishedListener;
     public void invocationFinished(InvocationFinishedEvent invocationFinishedEvent){
       numMethodRuns++;
       System.out.println(invocationFinishedEvent.getObjectName() +" finished execution");
+      //invocationFinishedEvent.toString();
     }
   }

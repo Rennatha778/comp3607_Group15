@@ -5,11 +5,11 @@ import java.io.File;
 import java.util.TreeMap;
 
 public class CreatingJSONFile implements ReportPublisher {
-    TreeMap<String,Data> dataTreeMap;
+  TreeMap<String,Data> dataTreeMap;
   public void generateReport(TreeMap<String,Data> tr){
     dataTreeMap = tr;
     try {
-        File directory =  new File("C:\\Users\\Owner\\Documents\\JSONFiles");
+        File directory =  new File("C:\\Users\\Owner\\Documents\\PluginFiles");
         directory.mkdirs();
 
         File file = new File(directory, "PluginMetrics.json");

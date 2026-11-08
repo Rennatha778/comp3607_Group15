@@ -19,7 +19,8 @@ public class TelDataCollection implements CompileListener, BluejListeners {
     d.addLongData("totalCompileTime", totalCompileTime);
     d.addIntData("numCompileFailed", numCompileFailed);
     d.addIntData("numCompileSuccessful", numCompileSuccessful);
-    d.addLongData("averageCompileTime",totalCompileTime/(numCompileFailed + numCompileSuccessful));
+    if(numCompileFailed != 0 || numCompileSuccessful != 0)
+      d.addLongData("averageCompileTime",totalCompileTime/(numCompileFailed + numCompileSuccessful));
 
     return d;
   }

@@ -80,10 +80,10 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
 
   public void generateReport(TreeMap<String,Data> tr){
     ReportPublisher rp = new CreatingJSONFile();
-    //ReportPublisher jp = new CreatingPDFFile();
+    ReportPublisher jp = new CreatingPDFFile();
 
     rp.generateReport(tr);
-    //jp.generateReport();
+    jp.generateReport(tr);
 
     System.out.println("Report generated");
 
