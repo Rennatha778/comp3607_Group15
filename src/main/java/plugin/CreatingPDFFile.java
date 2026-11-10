@@ -131,9 +131,9 @@ public class CreatingPDFFile implements ReportPublisher {
         content.showText(String.valueOf(longdata));
         content.newLineAtOffset(0, -24);
 
-        if(longlable == "totalActiveTime"){
+        if(longlable == "activeTypingTime"){
           activeTime = longdata;
-        }else if(longlable == "totalIdleTime"){
+        }else if(longlable == "idleTypingTime"){
           idolTime = longdata;
         }
       }

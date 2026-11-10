@@ -7,6 +7,7 @@ import java.util.TreeMap;
 public class CreatingJSONFile implements ReportPublisher {
   TreeMap<String,Data> dataTreeMap;
   TreeMap<String,Integer> studentInfo;
+  TreeMap<String,Object> jsonData;
 
 
   public void generateReport(TreeMap<String,Data> tr){
@@ -16,6 +17,11 @@ public class CreatingJSONFile implements ReportPublisher {
     studentInfo.put("Mikayla Roberts",8160);
     studentInfo.put("Rennatha Thomas",816044740);
     
+    jsonData = new TreeMap<String,Object>();
+    jsonData.put("Plugin Metrics",dataTreeMap);
+    jsonData.put("Student Info",studentInfo);
+    
+
     try {
         File directory =  new File("C:\\Users\\Owner\\Documents\\PluginFiles");
         directory.mkdirs();
@@ -23,8 +29,7 @@ public class CreatingJSONFile implements ReportPublisher {
         File file = new File(directory, "PluginMetrics.json");
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter().writeValue(file,studentInfo);
-        mapper.writerWithDefaultPrettyPrinter().writeValue(file, dataTreeMap);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(file, jsonData);
         
         System.out.println("JSON file created.");
         }
