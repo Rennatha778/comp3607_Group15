@@ -1,6 +1,7 @@
 package plugin;
 
 import bluej.BlueJEventListener;
+import bluej.editor.TextEditor;
 import bluej.extensions2.*;
 import bluej.extensions2.event.*;
 import java.net.URL;
@@ -32,6 +33,8 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     startTime = System.currentTimeMillis();
     prevEvent = startTime;
     this.bluejInstance = bluej;
+
+  
     compileListner = new TelDataCollection();
     classListner = new classDataCollection();
     packageListner = new projectDataCollection();
@@ -123,6 +126,7 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   public String getName(){
     return "mainExtensionCatcher";
   } 
+
   public long getTotalSessionTime(){
     if(this.endTime != 0 && this.startTime != 0)
       return this.endTime - this.startTime;

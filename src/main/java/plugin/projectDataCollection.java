@@ -1,7 +1,10 @@
 package plugin;
 
+import bluej.editor.Editor;
+import bluej.extensions2.BClass;
 import bluej.extensions2.PackageNotFoundException;
 import bluej.extensions2.ProjectNotOpenException;
+import bluej.extensions2.editor.JavaEditor;
 import bluej.extensions2.event.PackageEvent;
 import bluej.extensions2.event.PackageListener;
 import bluej.pkgmgr.Project;
@@ -18,10 +21,9 @@ public class projectDataCollection implements PackageListener, BluejListeners{
   }
 
   @Override 
-  public void packageOpened (PackageEvent packageEvent){
-    numPackagesOpened++;
+  public void packageOpened (PackageEvent packageEvent){ 
     try{
-
+      numPackagesOpened++;      
       packageName = packageEvent.getPackage().getName();
       System.out.println(packageName + " opened!");
 

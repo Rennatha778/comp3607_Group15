@@ -1,11 +1,15 @@
 package plugin;
 
+import bluej.extensions2.PackageNotFoundException;
+import bluej.extensions2.ProjectNotOpenException;
+import bluej.extensions2.editor.JavaEditor;
 import bluej.extensions2.event.ClassEvent;
 import bluej.extensions2.event.ClassListener;
 
 public class classDataCollection implements ClassListener, BluejListeners{
     int numStatechanges = 0;
     int numClassesRemoved = 0;
+    
     
     public Data getData(){
       Data d = new Data();
@@ -17,8 +21,7 @@ public class classDataCollection implements ClassListener, BluejListeners{
     @Override
     public void classNameChanged(ClassEvent classEvent){
       System.out.println("Class name changed from: "+ classEvent.getOldName());
-      System.out.println("Class name changed to: "+ classEvent.getClass().getName());
-      
+      System.out.println("Class name changed to: "+ classEvent.getClass().getName());     
     }
 
     @Override 
@@ -31,6 +34,15 @@ public class classDataCollection implements ClassListener, BluejListeners{
     public void classStateChanged(ClassEvent classEvent){
       numStatechanges++;
       System.out.println(classEvent.getClass().getName() + " was changed.");
-      
+
+      try{
+        JavaEditor classEditor = classEvent.getBClass().getJavaEditorIfOpen();
+        int textlen = classEditor.getTextLength();
+        System.out.println("Lenght of "+classEditor.getTextLength());
+      }catch(ProjectNotOpenException e){
+        System.err.println("PACKAGE NOT OPENED!");
+      }catch(PackageNotFoundException e){
+        System.err.println("PACKAGE NOT OPENED!");
+      }
     }
 }

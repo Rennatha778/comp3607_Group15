@@ -40,11 +40,11 @@ public class CreatingPDFFile implements ReportPublisher {
 
   long activeTime;
   long idolTime;
-  int ApplicationEvent;
-  int ClassEvent;
-  int CompileEvent;
-  int InvokeEvent;
-  int PackageEvent;
+  int expectedErrors;
+  int symbolErrors;
+  int unclosedErros;
+  int returnErrors;
+  int otherErrors;
 
 
 
@@ -106,16 +106,16 @@ public class CreatingPDFFile implements ReportPublisher {
         content.showText(String.valueOf(intdata));
         content.newLineAtOffset(0, -24);
 
-        if(intlable == "Application Events"){
-          ApplicationEvent = intdata;
-        }else if(intlable == "Class Events"){
-          ClassEvent = intdata;
-        }else if(intlable == "Compile Events"){
-          CompileEvent = intdata;
-        }else if (intlable == "Invoke Finished Events"){
-          InvokeEvent = intdata;
-        }else if(intlable == "Package Events"){
-          PackageEvent = intdata;
+        if(intlable == "'Expected' Errors"){
+          expectedErrors = intdata;
+        }else if(intlable == "'Symbol' Errors"){
+          symbolErrors = intdata;
+        }else if(intlable == "'Unclosed' Errors"){
+          unclosedErros = intdata;
+        }else if (intlable == "'Return' Errors"){
+          returnErrors = intdata;
+        }else if(intlable == "Other Errors"){
+          otherErrors = intdata;
         }
       }
 
@@ -191,7 +191,7 @@ public class CreatingPDFFile implements ReportPublisher {
         pieCharImage
     );
 
-    float pieChartYLocation = page1.getMediaBox().getHeight() - 400;
+    float pieChartYLocation = page1.getMediaBox().getHeight() - 380;
 
     content2.drawImage(
       pdfImage,
@@ -203,16 +203,16 @@ public class CreatingPDFFile implements ReportPublisher {
 
     DefaultCategoryDataset programEventsDataset = new DefaultCategoryDataset();
 
-    programEventsDataset.addValue(ApplicationEvent,"Event","Application");
-    programEventsDataset.addValue(CompileEvent,"Event","Compile");
-    programEventsDataset.addValue(ClassEvent,"Event","Class");
-    programEventsDataset.addValue(InvokeEvent,"Event","Invoke Finished");
-    programEventsDataset.addValue(PackageEvent,"Event","Package");
+    programEventsDataset.addValue(expectedErrors,"Error","Expected");
+    programEventsDataset.addValue(symbolErrors,"Error","Symbol");
+    programEventsDataset.addValue(unclosedErros,"Error","Unclosed");
+    programEventsDataset.addValue(returnErrors,"Error","Return");
+    programEventsDataset.addValue(otherErrors,"Error","Other");
   
       JFreeChart barChart = ChartFactory.createBarChart(
-        "Events Frequency",
+        "Error Frequency Breakdown",
         "Frequency",
-        "Event",
+        "Error",
         programEventsDataset
       );
 
@@ -223,13 +223,13 @@ public class CreatingPDFFile implements ReportPublisher {
         600
       );*/
 
-      BufferedImage eventImage =
+      BufferedImage errorImage =
         barChart.createBufferedImage(800, 600);
       
       PDImageXObject barChartImage =
       LosslessFactory.createFromImage(
         document,
-        eventImage
+        errorImage
     );
     float barChartYLocation = pieChartYLocation - 300 - 20;
     content2.drawImage(barChartImage,

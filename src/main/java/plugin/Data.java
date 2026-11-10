@@ -4,6 +4,7 @@ import java.util.TreeMap;
 public class Data{
   TreeMap<String,Long> longData;
   TreeMap<String,Integer> intData;
+  TreeMap<String,Long>objectCreation;
 
   public Data(){
     longData = new TreeMap<String,Long>();
@@ -18,11 +19,19 @@ public class Data{
     intData.put(key,value);
   }
 
+  public void addObjectCreationData(String key, Long value){
+    objectCreation.put(key,value);
+  }
+
   public TreeMap<String,Long> getLongTreeMap(){
     return longData;
   }
 
   public TreeMap<String,Integer> getIntTreeMap(){
     return intData;
+  }
+
+  public TreeMap<String,Long> getObjectCreationMap(){
+    return objectCreation;
   }
 }
