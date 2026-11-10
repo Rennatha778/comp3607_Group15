@@ -66,6 +66,11 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
       numClassEvent++;
     }else if (event instanceof PackageEvent){
       numPackageEvent++;
+      PackageEvent newPackageEvent = (PackageEvent) event;
+      if(newPackageEvent != null){
+        classListner.getPackageInfo(newPackageEvent);
+      }
+      
     }else if( event instanceof InvocationFinishedEvent){
       numInvokeFinishedEvent++;
     }

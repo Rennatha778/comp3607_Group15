@@ -4,11 +4,12 @@ import java.util.TreeMap;
 public class Data{
   TreeMap<String,Long> longData;
   TreeMap<String,Integer> intData;
-  TreeMap<String,Long>objectCreation;
+  TreeMap<String,TreeMap<String,Long>>objectCreation;
 
   public Data(){
     longData = new TreeMap<String,Long>();
     intData = new TreeMap<String,Integer>();
+    objectCreation = new TreeMap<String,TreeMap<String,Long>>();
   }
 
   public void addLongData(String key, Long value){
@@ -19,7 +20,7 @@ public class Data{
     intData.put(key,value);
   }
 
-  public void addObjectCreationData(String key, Long value){
+  public void addObjectCreationData(String key, TreeMap<String,Long> value){
     objectCreation.put(key,value);
   }
 
@@ -31,7 +32,7 @@ public class Data{
     return intData;
   }
 
-  public TreeMap<String,Long> getObjectCreationMap(){
+  public TreeMap<String,TreeMap<String,Long>> getObjectCreationMap(){
     return objectCreation;
   }
 }
