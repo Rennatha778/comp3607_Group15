@@ -19,6 +19,13 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   private long totalIdleTime = 0;
   private long prevEvent = 0;
   private long currentEvent = 0;
+
+  private int numCompileEvent = 0;
+  private int numPackageEvent = 0;
+  private int numClassEvent = 0;
+  private int numInvokeFinishedEvent = 0;
+  private int numApplicationEvent = 0;
+
   
   @Override 
   public void startup(BlueJ bluej){
@@ -47,6 +54,18 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
       totalIdleTime = totalIdleTime + (currentEvent - prevEvent);
     }
     prevEvent = currentEvent;
+
+    if(event instanceof ApplicationEvent){
+      numApplicationEvent++;
+    }else if(event instanceof CompileEvent){
+      numCompileEvent++;
+    }else if (event instanceof ClassEvent){
+      numClassEvent++;
+    }else if (event instanceof PackageEvent){
+      numPackageEvent++;
+    }else if( event instanceof InvocationFinishedEvent){
+      numInvokeFinishedEvent++;
+    }
   }
 
 
@@ -60,6 +79,7 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     tr.put("compileListner",compileListner.getData());
     tr.put("invokeListner",invokeListner.getData());
     tr.put("main extension listener",this.getData());
+
 
     generateReport(tr);
 
@@ -114,6 +134,13 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     d.addLongData("totalSessionTime",getTotalSessionTime());
     d.addLongData("totalActiveTime",(getTotalSessionTime() - totalIdleTime));
     d.addLongData("totalIdleTime",totalIdleTime);
+
+    d.addIntData("Application Events", numApplicationEvent);
+    d.addIntData("Class Events", numClassEvent);
+    d.addIntData("Compile Events", numCompileEvent);
+    d.addIntData("Invoke Finished Events", numInvokeFinishedEvent);
+    d.addIntData("Package Events", numPackageEvent);
+
     return d;
   }
 }

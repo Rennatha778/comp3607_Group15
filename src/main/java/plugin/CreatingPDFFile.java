@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -17,20 +19,34 @@ import javax.swing.text.ParagraphView;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.general.PieDataset;
 
 import java.awt.image.BufferedImage;
 
 import java.io.File;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 
 public class CreatingPDFFile implements ReportPublisher {
   TreeMap<String,Data> dataTreeMap;
   ArrayList<String> names = new ArrayList<String>();
   ArrayList<Integer> intData = new ArrayList<Integer>();
   ArrayList<Long> longData = new ArrayList<Long>();
+
+  long activeTime;
+  long idolTime;
+  int ApplicationEvent;
+  int ClassEvent;
+  int CompileEvent;
+  int InvokeEvent;
+  int PackageEvent;
+
+
 
   public void generateReport(TreeMap<String,Data> tr){
     dataTreeMap = tr;
@@ -46,7 +62,13 @@ public class CreatingPDFFile implements ReportPublisher {
     PDPage page = new PDPage();
     document.addPage(page);
 
+    PDPage page1 = new PDPage();
+    document.addPage(page1);
+
     PDPageContentStream content = new PDPageContentStream(document, page);
+    PDPageContentStream content2 = new PDPageContentStream(document, page1);
+
+    DefaultPieDataset<String> sessionPieChar = new DefaultPieDataset<>();
 
     DataContainer metricNames = new DataCollection(new DataAdapter(dataTreeMap));
     //DataCollection metricData = new DataCollection(nAdapter,1);
@@ -83,6 +105,18 @@ public class CreatingPDFFile implements ReportPublisher {
         intData.add(intdata);
         content.showText(String.valueOf(intdata));
         content.newLineAtOffset(0, -24);
+
+        if(intlable == "Application Events"){
+          ApplicationEvent = intdata;
+        }else if(intlable == "Class Events"){
+          ClassEvent = intdata;
+        }else if(intlable == "Compile Events"){
+          CompileEvent = intdata;
+        }else if (intlable == "Invoke Finished Events"){
+          InvokeEvent = intdata;
+        }else if(intlable == "Package Events"){
+          PackageEvent = intdata;
+        }
       }
 
       DataIterator subNameLongIterator = subMetricLong.getDataIterator(0);
@@ -96,45 +130,60 @@ public class CreatingPDFFile implements ReportPublisher {
         long longdata = (long)subDataLongIterator.next();
         content.showText(String.valueOf(longdata));
         content.newLineAtOffset(0, -24);
+
+        if(longlable == "totalActiveTime"){
+          activeTime = longdata;
+        }else if(longlable == "totalIdleTime"){
+          idolTime = longdata;
+        }
       }
     
     }
     content.endText();
     content.close();
 
-    PDPage page1 = new PDPage();
-    document.addPage(page1);
+    
 
-    PDPageContentStream content2 = new PDPageContentStream(document, page1);
-
-    DefaultPieDataset<String> sessionPieChar = new DefaultPieDataset<>();
-        int sessionPos = names.indexOf("totalSessionTime");
+    
+        /* int activePos = names.indexOf("totalActiveTime");
+        //System.out.println("Index in array: "+ sessionPos + " item: "+names.get(sessionPos));
         int idlePos = names.indexOf("totalIdleTime");
-        int findPos = idlePos-intData.size();
 
-        int posinArry;
-        sessionPieChar.setValue("Total Idle Time", longData.get(findPos));
-        findPos = sessionPos - intData.size();
-        sessionPieChar.setValue("Total Active Time", longData.get(findPos));
+        int findPos = idlePos - intData.size(); */
 
-        JFreeChart compilePieChart =
+        if(intData.size() != longData.size()){
+
+        }
+
+        sessionPieChar.setValue("Total Idle Time", idolTime);
+        sessionPieChar.setValue("Total Active Time", activeTime);
+
+        JFreeChart sessionPieChart =
                 ChartFactory.createPieChart(
-                        "Compilation Results",
+                        "Session Breakdown",
                         sessionPieChar,
                         true,
                         true,
                         false
                 );
+        PiePlot plot = (PiePlot) sessionPieChart.getPlot();
 
-        ChartUtils.saveChartAsPNG(
+        plot.setLabelGenerator(new StandardPieSectionLabelGenerator(
+        "{0}: {2}",
+        NumberFormat.getNumberInstance(),
+        new DecimalFormat("0.00%")
+    )
+);
+
+        /* ChartUtils.saveChartAsPNG(
                 new File("compileResults.png"),
-                compilePieChart,
+                sessionPieChart,
                 800,
                 600
-        );
+        ); */
 
         BufferedImage pieCharImage =
-        compilePieChart.createBufferedImage(800, 600);
+        sessionPieChart.createBufferedImage(800, 600);
       
       PDImageXObject pdfImage =
       LosslessFactory.createFromImage(
@@ -142,53 +191,57 @@ public class CreatingPDFFile implements ReportPublisher {
         pieCharImage
     );
 
+    float pieChartYLocation = page1.getMediaBox().getHeight() - 400;
+
     content2.drawImage(
       pdfImage,
       50,   // x position
-      250,  // y position
+      pieChartYLocation,  // y position
       400,  // width
       300   // height
     ); 
-    content2.close();
 
-    /* DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    DefaultCategoryDataset programEventsDataset = new DefaultCategoryDataset();
 
-    dataset.addValue(15, "Appointments", "Cardiology");
-    dataset.addValue(22, "Appointments", "Pediatrics");
-    dataset.addValue(18, "Appointments", "Neurology"); */
+    programEventsDataset.addValue(ApplicationEvent,"Event","Application");
+    programEventsDataset.addValue(CompileEvent,"Event","Compile");
+    programEventsDataset.addValue(ClassEvent,"Event","Class");
+    programEventsDataset.addValue(InvokeEvent,"Event","Invoke Finished");
+    programEventsDataset.addValue(PackageEvent,"Event","Package");
   
-      /* JFreeChart chart = ChartFactory.createBarChart(
-        "Appointments by Department",
-        "Department",
-        "Appointments",
-        //dataset
-      ); */
+      JFreeChart barChart = ChartFactory.createBarChart(
+        "Events Frequency",
+        "Frequency",
+        "Event",
+        programEventsDataset
+      );
 
       /* ChartUtils.saveChartAsPNG(
         new File("appointments.png"),
         chart,
         800,
         600
-      ); */
+      );*/
 
-      /* BufferedImage image =
-        chart.createBufferedImage(800, 600);
+      BufferedImage eventImage =
+        barChart.createBufferedImage(800, 600);
       
-      PDImageXObject pdfImage =
+      PDImageXObject barChartImage =
       LosslessFactory.createFromImage(
         document,
-        image
+        eventImage
     );
+    float barChartYLocation = pieChartYLocation - 300 - 20;
+    content2.drawImage(barChartImage,
+        30,
+        barChartYLocation,
+        400,
+        300);
 
-    content.drawImage(
-      pdfImage,
-      50,   // x position
-      250,  // y position
-      400,  // width
-      300   // height
-    ); */
 
-      //System.out.println("Chart created.");
+    content2.close();
+
+      System.out.println("Charts created.");
 
     content.close();
 
