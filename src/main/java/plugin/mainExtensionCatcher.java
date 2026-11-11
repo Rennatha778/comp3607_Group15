@@ -108,8 +108,8 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   }
 
   public void generateReport(TreeMap<String,Data> listenerMetricTreeMaps){
-    ReportPublisher rp = new CreatingJSONFile();
-    ReportPublisher jp = new CreatingPDFFile();
+    ReportPublisher rp = new JSONFileGenerator();
+    ReportPublisher jp = new PDFFileGenerator();
 
     rp.generateReport(listenerMetricTreeMaps);
     jp.generateReport(listenerMetricTreeMaps);

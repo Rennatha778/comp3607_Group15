@@ -21,7 +21,6 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
     try{
       numPackagesOpened++;      
       System.out.println(packageEvent.getPackage().getName() + " opened!");
-      System.out.println(packageEvent.getPackage().getProject().getName() + " from");
 
     } catch(ProjectNotOpenException e){
       System.err.println("PACKAGE NOT OPENED!");

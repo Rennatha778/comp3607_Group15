@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.util.TreeMap;
 
-public class CreatingJSONFile implements ReportPublisher {
+public class JSONFileGenerator implements ReportPublisher {
   TreeMap<String,Data> listenerMetricsTreeMap;
   TreeMap<String,Integer> studentInfo;
   TreeMap<String,Object> jsonData;
