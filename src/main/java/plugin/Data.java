@@ -2,37 +2,37 @@ package plugin;
 import java.util.TreeMap;
 
 public class Data{
-  TreeMap<String,Long> longData;
-  TreeMap<String,Integer> intData;
-  TreeMap<String,TreeMap<String,Long>>objectCreation;
+  TreeMap<String,Long> longDataTreeMap;
+  TreeMap<String,Integer> intDataTreeMap;
+  TreeMap<String,TreeMap<String,Long>>objectCreationTreeMap;
 
   public Data(){
-    longData = new TreeMap<String,Long>();
-    intData = new TreeMap<String,Integer>();
-    objectCreation = new TreeMap<String,TreeMap<String,Long>>();
+    longDataTreeMap = new TreeMap<String,Long>();
+    intDataTreeMap = new TreeMap<String,Integer>();
+    objectCreationTreeMap = new TreeMap<String,TreeMap<String,Long>>();
   }
 
-  public void addLongData(String key, Long value){
-    longData.put(key,value);
+  public void addLongData(String metricName, Long metricLongValue){
+    longDataTreeMap.put(metricName,metricLongValue);
   }
 
-  public void addIntData(String key, Integer value){
-    intData.put(key,value);
+  public void addIntData(String metricName, Integer metricIntValue){
+    intDataTreeMap.put(metricName,metricIntValue);
   }
 
-  public void addObjectCreationData(String key, TreeMap<String,Long> value){
-    objectCreation.put(key,value);
+  public void addObjectCreationData(String metricName, TreeMap<String,Long> metricTreeMapValue){
+    objectCreationTreeMap.put(metricName,metricTreeMapValue);
   }
 
   public TreeMap<String,Long> getLongTreeMap(){
-    return longData;
+    return longDataTreeMap;
   }
 
   public TreeMap<String,Integer> getIntTreeMap(){
-    return intData;
+    return intDataTreeMap;
   }
 
   public TreeMap<String,TreeMap<String,Long>> getObjectCreationMap(){
-    return objectCreation;
+    return objectCreationTreeMap;
   }
 }

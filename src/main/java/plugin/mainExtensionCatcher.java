@@ -1,25 +1,22 @@
 package plugin;
 
-import bluej.BlueJEventListener;
-import bluej.editor.TextEditor;
 import bluej.extensions2.*;
 import bluej.extensions2.event.*;
-import java.net.URL;
-import java.net.http.WebSocket.Listener;
-import java.util.ArrayList;
 import java.util.TreeMap;
 
 public  class mainExtensionCatcher extends Extension implements ExtensionEventListener, BluejListeners {
-  private long startTime;
-  private long endTime;
-  private BlueJ bluejInstance;
-  private TelDataCollection compileListner;
-  private classDataCollection classListner;
-  private InvocationFinishedDataCollection invokeListner;
-  private projectDataCollection packageListner;
+  private long sessionStartTime;
+  private long sessionEndTime;
   private long totalIdleTime = 0;
-  private long prevEvent = 0;
-  private long currentEvent = 0;
+  private long prevEventTime = 0;
+  private long currEventTime = 0;
+  private BlueJ bluejInstance;
+
+  private CompileDataCollection compileListner;
+  private ClassDataCollection classListner;
+  private InvocationFinishedDataCollection invokeListner;
+  private PackageDataCollection packageListner;
+  
 
   private int numCompileEvent = 0;
   private int numPackageEvent = 0;
@@ -31,15 +28,14 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   
   @Override 
   public void startup(BlueJ bluej){
-    startTime = System.currentTimeMillis();
-    prevEvent = startTime;
+    sessionStartTime = System.currentTimeMillis();
+    prevEventTime = sessionStartTime;
     this.bluejInstance = bluej;
   
-    compileListner = new TelDataCollection();
-    classListner = new classDataCollection();
-    packageListner = new projectDataCollection();
+    compileListner = new CompileDataCollection();
+    classListner = new ClassDataCollection();
+    packageListner = new PackageDataCollection();
     invokeListner = new InvocationFinishedDataCollection();
-    
     
     bluejInstance.addExtensionEventListener(this);
     bluejInstance.addCompileListener(compileListner);
@@ -51,31 +47,32 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
 
   @Override
   public void eventOccurred(ExtensionEvent event){
-    currentEvent = System.currentTimeMillis();
+    currEventTime = System.currentTimeMillis();
     System.out.println("Event occurred:"+event.getClass().getSimpleName());
-    if((currentEvent - prevEvent) > 60000){
-      totalIdleTime = totalIdleTime + (currentEvent - prevEvent);
+    if((currEventTime - prevEventTime) > 60000){ // if gap between events is more than 1 minute (60 seconds), it is counted as idle time
+      totalIdleTime = totalIdleTime + (currEventTime - prevEventTime);
     }
-    prevEvent = currentEvent;
+    prevEventTime = currEventTime;
 
     if(event instanceof ApplicationEvent){
       numApplicationEvent++;
     }else if(event instanceof CompileEvent){
       numCompileEvent++;
     }else if (event instanceof ClassEvent){
+      //BPackage sent to classListener so that it can track the original number of classes in the package before any state changes
       if(this.bluejInstance.getCurrentPackage() != null){
         classListner.getPackageInfo(this.bluejInstance.getCurrentPackage());
-        System.out.println("PackageInfo sent");
+        System.out.println("Package Info sent");
       }
       
       numClassEvent++;
     }else if (event instanceof PackageEvent){
       numPackageEvent++;
       newPackageEvent = (PackageEvent) event;
+      //BPackage sent to classListener so that it can track the original number of classes in the package before any state changes
       if(newPackageEvent != null){
         classListner.getPackageInfo(newPackageEvent.getPackage());
       }
-      
     }else if( event instanceof InvocationFinishedEvent){
       numInvokeFinishedEvent++;
     }
@@ -84,20 +81,20 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
 
   @Override 
   public void terminate(){
-    endTime = System.currentTimeMillis();
+    sessionEndTime = System.currentTimeMillis();
     
-    TreeMap<String,Data> tr = new TreeMap<String,Data>();
-    tr.put("packageListner",packageListner.getData());
-    tr.put("classListner",classListner.getData());
-    tr.put("compileListner",compileListner.getData());
-    tr.put("invokeListner",invokeListner.getData());
-    tr.put("main extension listener",this.getData());
+    TreeMap<String,Data> listenerMetricTreeMaps = new TreeMap<String,Data>();
+    listenerMetricTreeMaps.put("packageListner",packageListner.getMetricData());
+    listenerMetricTreeMaps.put("classListner",classListner.getMetricData());
+    listenerMetricTreeMaps.put("compileListner",compileListner.getMetricData());
+    listenerMetricTreeMaps.put("invokeListner",invokeListner.getMetricData());
+    listenerMetricTreeMaps.put("main extension listener",this.getMetricData());
 
 
-    generateReport(tr);
+    generateReport(listenerMetricTreeMaps);
 
     if (bluejInstance != null){
-      //bluejInstance.removeExtensionEventListener(this);
+      bluejInstance.removeExtensionEventListener(this);
       bluejInstance.removePackageListener(packageListner);
       bluejInstance.removeClassListener(classListner);
       bluejInstance.removeCompileListener(compileListner);
@@ -105,18 +102,17 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     }
 
     System.out.println("Extension terminated.");
-    System.out.println("Total sesstion time: "+ (endTime-startTime));
+    System.out.println("Total sesstion time: "+ getTotalSessionTime());
     System.out.println("Total Idle time: "+totalIdleTime);
-    System.out.println("Total active time: "+((endTime-startTime) - totalIdleTime));
-    //generateReport();
+    System.out.println("Total active time: "+(getTotalSessionTime() - totalIdleTime));
   }
 
-  public void generateReport(TreeMap<String,Data> tr){
+  public void generateReport(TreeMap<String,Data> listenerMetricTreeMaps){
     ReportPublisher rp = new CreatingJSONFile();
     ReportPublisher jp = new CreatingPDFFile();
 
-    rp.generateReport(tr);
-    jp.generateReport(tr);
+    rp.generateReport(listenerMetricTreeMaps);
+    jp.generateReport(listenerMetricTreeMaps);
 
     System.out.println("Report generated");
 
@@ -134,27 +130,32 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
 
   @Override 
   public String getName(){
-    return "mainExtensionCatcher";
+    return "BlueJ Metrics Plugin";
   } 
 
+  @Override
+  public String getDescription() {
+      return "A metric tracker plugin";
+   }
+
   public long getTotalSessionTime(){
-    if(this.endTime != 0 && this.startTime != 0)
-      return this.endTime - this.startTime;
+    if(this.sessionEndTime != 0 && this.sessionStartTime != 0)
+      return this.sessionEndTime - this.sessionStartTime;
     return 0;
   }
 
-  public Data getData(){
-    Data d = new Data();
-    d.addLongData("totalSessionTime",getTotalSessionTime());
-    d.addLongData("totalActiveTime",(getTotalSessionTime() - totalIdleTime));
-    d.addLongData("totalIdleTime",totalIdleTime);
+  public Data getMetricData(){
+    Data mainExtentionCaterMetrics = new Data();
+    mainExtentionCaterMetrics.addLongData("Total_Session_Time",getTotalSessionTime());
+    mainExtentionCaterMetrics.addLongData("Total_Active_Time",(getTotalSessionTime() - totalIdleTime));
+    mainExtentionCaterMetrics.addLongData("Total_Idle_Time",totalIdleTime);
 
-    d.addIntData("Application Events", numApplicationEvent);
-    d.addIntData("Class Events", numClassEvent);
-    d.addIntData("Compile Events", numCompileEvent);
-    d.addIntData("Invoke Finished Events", numInvokeFinishedEvent);
-    d.addIntData("Package Events", numPackageEvent);
+    mainExtentionCaterMetrics.addIntData("Application_Events", numApplicationEvent);
+    mainExtentionCaterMetrics.addIntData("Class_Events", numClassEvent);
+    mainExtentionCaterMetrics.addIntData("Compile_Events", numCompileEvent);
+    mainExtentionCaterMetrics.addIntData("Invoke_Finished_Events", numInvokeFinishedEvent);
+    mainExtentionCaterMetrics.addIntData("Package_Events", numPackageEvent);
 
-    return d;
+    return mainExtentionCaterMetrics;
   }
 }

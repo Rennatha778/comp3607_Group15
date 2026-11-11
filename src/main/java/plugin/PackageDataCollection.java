@@ -1,38 +1,32 @@
 package plugin;
 
-import bluej.editor.Editor;
-import bluej.extensions2.BClass;
 import bluej.extensions2.PackageNotFoundException;
 import bluej.extensions2.ProjectNotOpenException;
-import bluej.extensions2.editor.JavaEditor;
 import bluej.extensions2.event.PackageEvent;
 import bluej.extensions2.event.PackageListener;
-import bluej.pkgmgr.Project;
 
-public class projectDataCollection implements PackageListener, BluejListeners{
-  String packageName;
+
+public class PackageDataCollection implements PackageListener, BluejListeners{
   int numPackagesOpened = 0;
 
-  public Data getData(){
-    Data d = new Data();
-    d.addIntData("numPackagesOpened",numPackagesOpened);
+  public Data getMetricData(){
+    Data packageMetrics = new Data();
+    packageMetrics.addIntData("Number_of_Packages_Opened",numPackagesOpened);
 
-    return d;
+    return packageMetrics;
   }
 
   @Override 
   public void packageOpened (PackageEvent packageEvent){ 
     try{
       numPackagesOpened++;      
-      packageName = packageEvent.getPackage().getName();
-      System.out.println(packageName + " opened!");
+      System.out.println(packageEvent.getPackage().getName() + " opened!");
+      System.out.println(packageEvent.getPackage().getProject().getName() + " from");
 
     } catch(ProjectNotOpenException e){
       System.err.println("PACKAGE NOT OPENED!");
-      packageName = "Unknown Package";
     }catch(PackageNotFoundException e){
       System.err.println("PACKAGE NOT OPENED!");
-      packageName = "Unknown Package";
     }
 
   }
@@ -40,17 +34,12 @@ public class projectDataCollection implements PackageListener, BluejListeners{
   @Override 
   public void packageClosing(PackageEvent packageEvent){
     try{
-      packageName = packageEvent.getPackage().getName();
-      System.out.println(packageName + " closed!");
+      System.out.println(packageEvent.getPackage().getName()+ " closed!");
     } catch(ProjectNotOpenException e){
       System.err.println("PACKAGE NOT OPENED!");
-      packageName = "Unknown Package";
     }catch(PackageNotFoundException e){
       System.err.println("PACKAGE NOT OPENED!");
-      packageName = "Unknown Package";
     }
     
   }
-
-  
 }

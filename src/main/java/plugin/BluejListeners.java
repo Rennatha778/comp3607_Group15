@@ -1,5 +1,5 @@
 package plugin;
 
 public interface BluejListeners {
-  public Data getData();
+  public Data getMetricData();
 }

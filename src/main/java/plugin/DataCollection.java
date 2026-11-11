@@ -1,17 +1,15 @@
 package plugin;
 
-import java.util.TreeMap;
-
 public class DataCollection implements DataContainer{
-  AdapterInterface data;
-  public DataCollection(AdapterInterface data){
-    this.data = data;
+  AdapterInterface adapterData;
+  public DataCollection(AdapterInterface metrics){
+    this.adapterData = metrics;
   }
   
-  public DataIterator getDataIterator(int code){
-    if(code == 0)
-      return new ByNameIterator(data);
+  public DataIterator getDataIterator(int iteratorCode){
+    if(iteratorCode == 0)
+      return new ByKeyIterator(adapterData);
     else
-      return new ByDataIterator(data);
+      return new ByValueIterator(adapterData);
   }
 }

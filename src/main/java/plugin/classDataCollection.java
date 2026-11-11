@@ -3,185 +3,169 @@ package plugin;
 import bluej.extensions2.BClass;
 import bluej.extensions2.BMethod;
 import bluej.extensions2.BPackage;
-import bluej.extensions2.BProject;
 import bluej.extensions2.PackageNotFoundException;
 import bluej.extensions2.ProjectNotOpenException;
 import bluej.extensions2.editor.JavaEditor;
 import bluej.extensions2.event.ClassEvent;
 import bluej.extensions2.event.ClassListener;
-import bluej.extensions2.event.PackageListener;
-import java.util.ArrayList;
 import java.util.TreeMap;
 
-import bluej.extensions2.event.PackageEvent;
 
 
-public class classDataCollection implements ClassListener, BluejListeners{
-    int numStatechanges = 0;
-    int numClassesRemoved = 0;
-    int prevTyped = 0;
-    int currentTyped = 0;
-    long activeTypeTime = 0;
-    long idelTypeTime = 0;
-    long prevType = 0;
-    long currType;
-    JavaEditor classEditor;
-    BClass currBClass;
+public class ClassDataCollection implements ClassListener, BluejListeners{
+  int numStatechanges = 0;
+  int numClassesRemoved = 0;
+  int prevTypedCount = 0;
+  int currTypedCount = 0;
 
-    BPackage currentPackage = null;
-    BClass[] classes = null;
-    BMethod[] classMethods;
-    int arraySize;
-    TreeMap<String,Long>removedClasses = new TreeMap<String,Long>();
-    TreeMap<String,Long>createdClasses = new TreeMap<String,Long>();
-    TreeMap<String,Long>modifiedClasses = new TreeMap<String,Long>();
-    TreeMap<String,Long>createdMethods = new TreeMap<String,Long>();;
+  long activeTypeTime = 0;
+  long idleTypeTime = 0;
+  long prevTypedTime = 0;
+  long currTypedTime = 0;
+
+  JavaEditor currClassEditor;
+  BClass currBClass;
+
+  BPackage currPackage = null;
+  BClass[] classes = null;
+  BMethod[] classMethods;
+  int classesSize;
+
+  TreeMap<String,Long>removedClassesTreeMap = new TreeMap<String,Long>();
+  TreeMap<String,Long>createdClassesTreeMap = new TreeMap<String,Long>();
+  TreeMap<String,Long>modifiedClassesTreeMap = new TreeMap<String,Long>();
+  TreeMap<String,Long>createdMethodsTreeMap = new TreeMap<String,Long>();;
     
     
-    public Data getData(){
-      Data d = new Data();
-      d.addIntData("numStatechanges",numStatechanges);
-      d.addIntData("numClassesRemoved",numClassesRemoved);
-      d.addLongData("activeTypingTime", activeTypeTime);
-      d.addLongData("idleTypingTime", idelTypeTime);
-      d.addObjectCreationData("CreatedClasses",createdClasses);
-      d.addObjectCreationData("RemovedClasses",removedClasses);
-      d.addObjectCreationData("ModifiedClasses",modifiedClasses);
+  public Data getMetricData(){
+   Data classMetrics = new Data();
+    classMetrics.addIntData("Number_of_State_Changes",numStatechanges);
+    classMetrics.addIntData("Number_of_Classes_Removed",numClassesRemoved);
+    classMetrics.addLongData("Total_Active_Typing_Time", activeTypeTime);
+    classMetrics.addLongData("Total_Idle_Typing_Time", idleTypeTime);
+    classMetrics.addObjectCreationData("Created_Classes",createdClassesTreeMap);
+    classMetrics.addObjectCreationData("Removed_Classes",removedClassesTreeMap);
+    classMetrics.addObjectCreationData("Modified_Classes",modifiedClassesTreeMap);
 
-      return d;
-    }
+     return classMetrics;
+  }
 
-    @Override
-    public void classNameChanged(ClassEvent classEvent){
-      long time = System.currentTimeMillis();
-      System.out.println("Class name changed from: "+ classEvent.getOldName());
-      System.out.println("Class name changed to: "+ classEvent.getClass().getName());  
+  @Override
+  public void classNameChanged(ClassEvent classEvent){
+    long timeChange = System.currentTimeMillis();
+    System.out.println("Class name changed from: "+ classEvent.getOldName());
+    System.out.println("Class name changed to: "+ classEvent.getClass().getName());  
 
-      if(checkName(classEvent.getOldName(),classEvent) && this.classes != null){
-        modifiedClasses.put(classEvent.getBClass().getName(),time);
-        System.out.println("Created name changed:"+classEvent.getBClass().getName());
-        
-        updateClasses(classEvent);
-        
-      }
-
-    }
-
-    @Override 
-    public void classRemoved(ClassEvent classEvent){
-      Long removedTime = System.currentTimeMillis();
-
-      if(!checkName(classEvent.getBClass().getName(),classEvent) && this.classes != null){
-        removedClasses.put(classEvent.getBClass().getName(),removedTime);
-        numClassesRemoved++;
-        updateClasses(classEvent);
-      }
-      
-      System.out.println(classEvent.getBClass().getName() + " was removed.");
-    }
-
-    private synchronized void classCreated(Long time, ClassEvent classEvent){
-
-      if(!checkName(classEvent.getBClass().getName(),classEvent) && this.classes != null){
-        createdClasses.put(classEvent.getBClass().getName(),time);
-        System.out.println("Created class:"+classEvent.getBClass().getName());
-        updateClasses(classEvent);
-      }
-
-      
-    }
-
-    private void trackTypeTime(ClassEvent classEvent){
-      currBClass = classEvent.getBClass();
-      try{
-        if(classEvent.getBClass().getJavaEditorIfOpen() != null){
-          classEditor = classEvent.getBClass().getJavaEditorIfOpen();
-        currentTyped = classEditor.getTextLength();
-    
-        if(prevType != 0){
-          if(prevTyped != currentTyped && (currType - prevType) < 45000){
-            activeTypeTime = activeTypeTime + (currType - prevType);
-          }else{
-            idelTypeTime = idelTypeTime + (currType - prevType);
-          }
-        }
-        prevTyped = currentTyped;
-        prevType = currType;
-        updateClasses(classEvent);
-        }
-        
-        //System.out.println("Lenght of "+classEditor.getTextLength());
-      }catch(ProjectNotOpenException e){
-        System.err.println("PACKAGE NOT OPENED!");
-      }catch(PackageNotFoundException e){
-        System.err.println("PACKAGE NOT OPENED!");
-      }
-      
-    }
-
-    public void updateClasses(ClassEvent classEvent){
-      try{
-          if(classes != null && currentPackage != null){
-            this.classes = currentPackage.getClasses();
-          }
-        
-        }catch(ProjectNotOpenException e){
-        System.err.println("PACKAGE NOT OPENED!");
-        }catch(PackageNotFoundException e){
-        System.err.println("PACKAGE NOT OPENED!");
-        }
-    }
-
-    private boolean checkName(String name, ClassEvent classEvent){
+    if(this.classes != null && checkName(classEvent.getOldName(),classEvent)){
+      modifiedClassesTreeMap.put(classEvent.getBClass().getName(),timeChange);
+      System.out.println("Name changed successfully:");
       updateClasses(classEvent);
-      if(classes != null && classes.length != 0){
-        for(BClass bc : classes){
-          if(name.equals(bc.getName())){
-            return true;
-          }
+    }
+
+  }
+
+  @Override 
+  public void classRemoved(ClassEvent classEvent){
+    Long timeRemoved = System.currentTimeMillis();
+
+    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent)){
+      removedClassesTreeMap.put(classEvent.getBClass().getName(),timeRemoved);
+      numClassesRemoved++;
+      updateClasses(classEvent);
+    }
+      
+    System.out.println(classEvent.getBClass().getName() + " was removed.");
+  }
+
+  private synchronized void classCreated(Long time, ClassEvent classEvent){
+    if(!checkName(classEvent.getBClass().getName(),classEvent) && this.classes != null){
+      createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
+      System.out.println("Created class:"+classEvent.getBClass().getName());
+      updateClasses(classEvent);
+    }
+  }
+
+  private void trackTypeTime(ClassEvent classEvent){
+    currBClass = classEvent.getBClass();
+    try{
+      if(classEvent.getBClass().getJavaEditorIfOpen() != null){
+        currClassEditor = classEvent.getBClass().getJavaEditorIfOpen();
+        currTypedCount = currClassEditor.getTextLength();
+    
+      if(prevTypedTime != 0){
+        long typeTime = currTypedTime - prevTypedTime;
+        if(prevTypedCount != currTypedCount && typeTime < 45000){ //a gap time 45 seconds or greater is counted as idle time
+          activeTypeTime = activeTypeTime + typeTime;
+        }else{
+          idleTypeTime = idleTypeTime + typeTime;
         }
       }
-      return false;
-    }
-
-    
-
-    @Override 
-    public void classStateChanged(ClassEvent classEvent){
-      currType = System.currentTimeMillis();
-
-      classCreated(currType, classEvent);
-      
-      trackTypeTime(classEvent);
-      
-      //methodCreated(currType,classEvent);
-
-      numStatechanges++;
-      System.out.println(classEvent.getClass().getName() + " was changed.");
-
-    }
-
-    public void getPackageInfo(BPackage currentPackage){
-      this.currentPackage = currentPackage;
-      
-      try{
-        if(currentPackage!= null){
-          this.classes = this.currentPackage.getClasses();
-          arraySize = classes.length;
-          System.out.println("Classes size :"+arraySize);
-          //getClasses(classes);
-        }
+      prevTypedCount = currTypedCount;
+      prevTypedTime = currTypedTime;
+      updateClasses(classEvent);
+     }
         
+    }catch(ProjectNotOpenException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }catch(PackageNotFoundException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }
+      
+  }
 
-      }catch(ProjectNotOpenException e){
-        System.err.println("PACKAGE NOT OPENED!");
-      }catch(PackageNotFoundException e){
-        System.err.println("PACKAGE NOT OPENED!");
+  public synchronized void updateClasses(ClassEvent classEvent){
+    try{
+      if(classes != null && currPackage != null){
+        this.classes = currPackage.getClasses();
+      }
+        
+    }catch(ProjectNotOpenException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }catch(PackageNotFoundException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }
+  }
+
+  private synchronized boolean checkName(String name, ClassEvent classEvent){
+    updateClasses(classEvent);
+    if(classes != null && classes.length != 0){
+      for(BClass bc : classes){
+        if(name.equals(bc.getName())){
+          return true;
+        }
       }
     }
-    /* private void getClasses(BClass[] classes){
-      return classes;
-    } */
+    return false;
+  }
+
+  @Override 
+  public synchronized void classStateChanged(ClassEvent classEvent){
+    currTypedTime = System.currentTimeMillis();
+
+    classCreated(currTypedTime, classEvent);
+      
+    trackTypeTime(classEvent);
+      
+    numStatechanges++;
+    System.out.println(classEvent.getClass().getName() + " was changed.");
+
+  }
+
+  public void getPackageInfo(BPackage currentPackage){
+    this.currPackage = currentPackage;
+      
+    try{
+      if(currentPackage!= null){
+        this.classes = this.currPackage.getClasses();
+        classesSize = classes.length;
+        System.out.println("Classes size :"+classesSize);
+      }
     
+    }catch(ProjectNotOpenException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }catch(PackageNotFoundException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }
+  }   
 
 }

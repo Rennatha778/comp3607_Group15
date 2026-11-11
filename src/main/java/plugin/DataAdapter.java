@@ -3,12 +3,12 @@ package plugin;
 import java.util.TreeMap;
 
 public class DataAdapter implements AdapterInterface{
-  TreeMap<String,Data> dataMap;
-  public DataAdapter(TreeMap<String,Data> o){
-      dataMap = o;
+  TreeMap<String,Data> DataTreeMap;
+  public DataAdapter(TreeMap<String,Data> dataTreeMap){
+      DataTreeMap = dataTreeMap;
   }
 
   public TreeMap getMap(){
-    return dataMap;
+    return DataTreeMap;
   }
 }
