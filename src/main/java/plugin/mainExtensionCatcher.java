@@ -26,6 +26,7 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   private int numClassEvent = 0;
   private int numInvokeFinishedEvent = 0;
   private int numApplicationEvent = 0;
+  PackageEvent newPackageEvent;
 
   
   @Override 
@@ -33,7 +34,6 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     startTime = System.currentTimeMillis();
     prevEvent = startTime;
     this.bluejInstance = bluej;
-
   
     compileListner = new TelDataCollection();
     classListner = new classDataCollection();
@@ -63,12 +63,17 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     }else if(event instanceof CompileEvent){
       numCompileEvent++;
     }else if (event instanceof ClassEvent){
+      if(this.bluejInstance.getCurrentPackage() != null){
+        classListner.getPackageInfo(this.bluejInstance.getCurrentPackage());
+        System.out.println("PackageInfo sent");
+      }
+      
       numClassEvent++;
     }else if (event instanceof PackageEvent){
       numPackageEvent++;
-      PackageEvent newPackageEvent = (PackageEvent) event;
+      newPackageEvent = (PackageEvent) event;
       if(newPackageEvent != null){
-        classListner.getPackageInfo(newPackageEvent);
+        classListner.getPackageInfo(newPackageEvent.getPackage());
       }
       
     }else if( event instanceof InvocationFinishedEvent){

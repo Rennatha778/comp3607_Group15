@@ -18,6 +18,8 @@ public class ByNameIterator implements DataIterator{
     }else if(data instanceof LongAdapter){
       this.data = (TreeMap<String,Long>)data.getMap();
 
+    }else if(data instanceof TreeAdapter){
+      this.data = (TreeMap<String,TreeMap<String,TreeMap>>) data.getMap();
     }
     
     ArrayList<String> dataByName = new ArrayList<String>(this.data.keySet());

@@ -2,9 +2,9 @@ package plugin;
 
 import java.util.TreeMap;
 
-public class TreeAdapter {
-  TreeMap<String,TreeMap> dataMap;
-  public TreeAdapter(TreeMap<String,TreeMap> o){
+public class TreeAdapter implements AdapterInterface {
+  TreeMap<String,TreeMap<String,Long>> dataMap;
+  public TreeAdapter(TreeMap<String,TreeMap<String,Long>> o){
       dataMap = o;
   }
 

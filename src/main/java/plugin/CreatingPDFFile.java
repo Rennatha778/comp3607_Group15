@@ -51,6 +51,8 @@ public class CreatingPDFFile implements ReportPublisher {
   public void generateReport(TreeMap<String,Data> tr){
     dataTreeMap = tr;
 
+    
+
     try (PDDocument document = new PDDocument()) {
     
       Path path = Paths.get(
@@ -64,6 +66,8 @@ public class CreatingPDFFile implements ReportPublisher {
 
     PDPage page1 = new PDPage();
     document.addPage(page1);
+
+    
 
     PDPageContentStream content = new PDPageContentStream(document, page);
     PDPageContentStream content2 = new PDPageContentStream(document, page1);
@@ -91,9 +95,13 @@ public class CreatingPDFFile implements ReportPublisher {
 
       DataContainer subMetricInt = new DataCollection(new IntAdapter(data.getIntTreeMap()));
       DataCollection subMetricLong = new DataCollection(new LongAdapter(data.getLongTreeMap()));
+      DataContainer objectionCreation = new DataCollection(new TreeAdapter(data.getObjectCreationMap()));
+      
 
       DataIterator subNameIntIterator = subMetricInt.getDataIterator(0);
       DataIterator subDataIntIterator = subMetricInt.getDataIterator(1);
+      
+      
       while(subNameIntIterator.hasNext()){
         String intlable = (String)subNameIntIterator.next();
         content.showText(intlable);
@@ -137,19 +145,33 @@ public class CreatingPDFFile implements ReportPublisher {
           idolTime = longdata;
         }
       }
+
+      DataIterator subOuterOCNameIterator = objectionCreation.getDataIterator(0);
+      DataIterator subOuterTreeMapIterator = objectionCreation.getDataIterator(1);
+
+      while(subOuterOCNameIterator.hasNext()){
+        System.out.println("Outer OC Key:"+(String)subOuterOCNameIterator.next());
+
+        TreeMap<String, TreeMap<String,Long>> innerTreeMapCast = (TreeMap<String, TreeMap<String,Long>>) subOuterTreeMapIterator.next();
+
+        DataContainer innerTreeMap = new DataCollection(new TreeAdapter(innerTreeMapCast));
+
+        DataIterator innerTreeMapNameIterator = innerTreeMap.getDataIterator(0);
+        DataIterator innerTreeMapTreeIterator = innerTreeMap.getDataIterator(1);
+
+        
+        while(innerTreeMapNameIterator.hasNext()){
+          String Key = (String) innerTreeMapNameIterator.next();
+          System.out.println(Key);
+
+          System.out.println(String.valueOf((long)innerTreeMapTreeIterator.next()));
+        }
+      }
     
     }
     content.endText();
     content.close();
 
-    
-
-    
-        /* int activePos = names.indexOf("totalActiveTime");
-        //System.out.println("Index in array: "+ sessionPos + " item: "+names.get(sessionPos));
-        int idlePos = names.indexOf("totalIdleTime");
-
-        int findPos = idlePos - intData.size(); */
 
         if(intData.size() != longData.size()){
 
@@ -174,13 +196,6 @@ public class CreatingPDFFile implements ReportPublisher {
         new DecimalFormat("0.00%")
     )
 );
-
-        /* ChartUtils.saveChartAsPNG(
-                new File("compileResults.png"),
-                sessionPieChart,
-                800,
-                600
-        ); */
 
         BufferedImage pieCharImage =
         sessionPieChart.createBufferedImage(800, 600);
@@ -216,12 +231,6 @@ public class CreatingPDFFile implements ReportPublisher {
         programEventsDataset
       );
 
-      /* ChartUtils.saveChartAsPNG(
-        new File("appointments.png"),
-        chart,
-        800,
-        600
-      );*/
 
       BufferedImage errorImage =
         barChart.createBufferedImage(800, 600);
@@ -237,6 +246,8 @@ public class CreatingPDFFile implements ReportPublisher {
         barChartYLocation,
         400,
         300);
+
+        
 
 
     content2.close();

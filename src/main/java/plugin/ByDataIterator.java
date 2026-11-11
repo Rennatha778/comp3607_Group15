@@ -23,6 +23,9 @@ public class ByDataIterator implements DataIterator {
       this.data = (TreeMap<String,Long>)data.getMap();
       dataByName = new ArrayList<Long>(this.data.values());
 
+    }else if(data instanceof TreeAdapter){
+      this.data = (TreeMap<String,TreeMap<String,Long>>)data.getMap();
+      dataByName = new ArrayList<TreeMap<String,Long>>(this.data.values()); 
     }
   
     nameIterator = dataByName.iterator();

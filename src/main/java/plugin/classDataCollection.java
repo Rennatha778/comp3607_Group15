@@ -2,6 +2,8 @@ package plugin;
 
 import bluej.extensions2.BClass;
 import bluej.extensions2.BMethod;
+import bluej.extensions2.BPackage;
+import bluej.extensions2.BProject;
 import bluej.extensions2.PackageNotFoundException;
 import bluej.extensions2.ProjectNotOpenException;
 import bluej.extensions2.editor.JavaEditor;
@@ -26,7 +28,7 @@ public class classDataCollection implements ClassListener, BluejListeners{
     JavaEditor classEditor;
     BClass currBClass;
 
-    PackageEvent packageEvent;
+    BPackage currentPackage = null;
     BClass[] classes = null;
     BMethod[] classMethods;
     int arraySize;
@@ -69,18 +71,16 @@ public class classDataCollection implements ClassListener, BluejListeners{
     public void classRemoved(ClassEvent classEvent){
       Long removedTime = System.currentTimeMillis();
 
-      if(checkName(classEvent.getBClass().getName(),classEvent) && this.classes != null){
+      if(!checkName(classEvent.getBClass().getName(),classEvent) && this.classes != null){
         removedClasses.put(classEvent.getBClass().getName(),removedTime);
         numClassesRemoved++;
         updateClasses(classEvent);
       }
-
       
-      
-      System.out.println(classEvent.getClass().getName() + " was removed.");
+      System.out.println(classEvent.getBClass().getName() + " was removed.");
     }
 
-    private void classCreated(Long time, ClassEvent classEvent){
+    private synchronized void classCreated(Long time, ClassEvent classEvent){
 
       if(!checkName(classEvent.getBClass().getName(),classEvent) && this.classes != null){
         createdClasses.put(classEvent.getBClass().getName(),time);
@@ -94,7 +94,8 @@ public class classDataCollection implements ClassListener, BluejListeners{
     private void trackTypeTime(ClassEvent classEvent){
       currBClass = classEvent.getBClass();
       try{
-        classEditor = classEvent.getBClass().getJavaEditorIfOpen();
+        if(classEvent.getBClass().getJavaEditorIfOpen() != null){
+          classEditor = classEvent.getBClass().getJavaEditorIfOpen();
         currentTyped = classEditor.getTextLength();
     
         if(prevType != 0){
@@ -107,6 +108,8 @@ public class classDataCollection implements ClassListener, BluejListeners{
         prevTyped = currentTyped;
         prevType = currType;
         updateClasses(classEvent);
+        }
+        
         //System.out.println("Lenght of "+classEditor.getTextLength());
       }catch(ProjectNotOpenException e){
         System.err.println("PACKAGE NOT OPENED!");
@@ -118,11 +121,10 @@ public class classDataCollection implements ClassListener, BluejListeners{
 
     public void updateClasses(ClassEvent classEvent){
       try{
-          if(classes != null){
-            classes = classEvent.getPackage().getClasses();
+          if(classes != null && currentPackage != null){
+            this.classes = currentPackage.getClasses();
           }
-          
-          
+        
         }catch(ProjectNotOpenException e){
         System.err.println("PACKAGE NOT OPENED!");
         }catch(PackageNotFoundException e){
@@ -159,14 +161,17 @@ public class classDataCollection implements ClassListener, BluejListeners{
 
     }
 
-    public void getPackageInfo(PackageEvent packageEvent){
-      this.packageEvent = packageEvent;
+    public void getPackageInfo(BPackage currentPackage){
+      this.currentPackage = currentPackage;
       
       try{
-        this.classes = this.packageEvent.getPackage().getClasses();
-        arraySize = classes.length;
-        System.out.println("Classes size :"+arraySize);
-        //getClasses(classes);
+        if(currentPackage!= null){
+          this.classes = this.currentPackage.getClasses();
+          arraySize = classes.length;
+          System.out.println("Classes size :"+arraySize);
+          //getClasses(classes);
+        }
+        
 
       }catch(ProjectNotOpenException e){
         System.err.println("PACKAGE NOT OPENED!");
