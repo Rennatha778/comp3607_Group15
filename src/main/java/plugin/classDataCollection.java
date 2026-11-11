@@ -68,7 +68,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   public void classRemoved(ClassEvent classEvent){
     Long timeRemoved = System.currentTimeMillis();
 
-    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent)){
+    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !removedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
       removedClassesTreeMap.put(classEvent.getBClass().getName(),timeRemoved);
       numClassesRemoved++;
       updateClasses(classEvent);
@@ -78,8 +78,16 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   }
 
   private synchronized void classCreated(Long time, ClassEvent classEvent){
-    if(!checkName(classEvent.getBClass().getName(),classEvent) && this.classes != null){
+    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
       createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
+      System.out.println("Created class:"+classEvent.getBClass().getName());
+      updateClasses(classEvent);
+    }
+  }
+
+  private synchronized void classModified(Long time, ClassEvent classEvent){
+    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !modifiedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+      modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
       System.out.println("Created class:"+classEvent.getBClass().getName());
       updateClasses(classEvent);
     }
@@ -128,7 +136,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
 
   private synchronized boolean checkName(String name, ClassEvent classEvent){
     updateClasses(classEvent);
-    if(classes != null && classes.length != 0){
+    if(this.classes != null && classes.length != 0){
       for(BClass bc : classes){
         if(name.equals(bc.getName())){
           return true;
@@ -143,6 +151,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     currTypedTime = System.currentTimeMillis();
 
     classCreated(currTypedTime, classEvent);
+    classModified(currTypedTime,classEvent);
       
     trackTypeTime(classEvent);
       
