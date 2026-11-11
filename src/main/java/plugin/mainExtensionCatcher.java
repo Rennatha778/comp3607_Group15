@@ -31,7 +31,11 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     sessionStartTime = System.currentTimeMillis();
     prevEventTime = sessionStartTime;
     this.bluejInstance = bluej;
-  
+    connectListeners();
+    System.out.println("Extension started successfully.");
+  } 
+
+  public void connectListeners(){
     compileListner = new CompileDataCollection();
     classListner = new ClassDataCollection();
     packageListner = new PackageDataCollection();
@@ -42,18 +46,24 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     bluejInstance.addClassListener(classListner);
     bluejInstance.addPackageListener(packageListner);
     bluejInstance.addInvocationFinishedListener(invokeListner);
-    System.out.println("Extension started successfully.");
-  } 
+  }
 
   @Override
-  public void eventOccurred(ExtensionEvent event){
+  public synchronized void eventOccurred(ExtensionEvent event){
     currEventTime = System.currentTimeMillis();
     System.out.println("Event occurred:"+event.getClass().getSimpleName());
+    trackGap();
+    updateEventCount(event);
+  }
+
+  private synchronized void trackGap(){
     if((currEventTime - prevEventTime) > 60000){ // if gap between events is more than 1 minute (60 seconds), it is counted as idle time
       totalIdleTime = totalIdleTime + (currEventTime - prevEventTime);
     }
     prevEventTime = currEventTime;
+  }
 
+  private void updateEventCount(ExtensionEvent event){
     if(event instanceof ApplicationEvent){
       numApplicationEvent++;
     }else if(event instanceof CompileEvent){
@@ -64,7 +74,6 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
         classListner.getPackageInfo(this.bluejInstance.getCurrentPackage());
         System.out.println("Package Info sent");
       }
-      
       numClassEvent++;
     }else if (event instanceof PackageEvent){
       numPackageEvent++;
@@ -82,29 +91,20 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   @Override 
   public void terminate(){
     sessionEndTime = System.currentTimeMillis();
-    
+    generateReport(collectListenerMetrics());
+    disconnectListeners();
+
+    printEndingMetricMessage();
+  }
+
+  private TreeMap<String, Data> collectListenerMetrics(){
     TreeMap<String,Data> listenerMetricTreeMaps = new TreeMap<String,Data>();
     listenerMetricTreeMaps.put("packageListner",packageListner.getMetricData());
     listenerMetricTreeMaps.put("classListner",classListner.getMetricData());
     listenerMetricTreeMaps.put("compileListner",compileListner.getMetricData());
     listenerMetricTreeMaps.put("invokeListner",invokeListner.getMetricData());
     listenerMetricTreeMaps.put("main extension listener",this.getMetricData());
-
-
-    generateReport(listenerMetricTreeMaps);
-
-    if (bluejInstance != null){
-      bluejInstance.removeExtensionEventListener(this);
-      bluejInstance.removePackageListener(packageListner);
-      bluejInstance.removeClassListener(classListner);
-      bluejInstance.removeCompileListener(compileListner);
-      bluejInstance.removeInvocationFinishedListener(invokeListner);
-    }
-
-    System.out.println("Extension terminated.");
-    System.out.println("Total sesstion time: "+ getTotalSessionTime());
-    System.out.println("Total Idle time: "+totalIdleTime);
-    System.out.println("Total active time: "+(getTotalSessionTime() - totalIdleTime));
+    return listenerMetricTreeMaps;
   }
 
   public void generateReport(TreeMap<String,Data> listenerMetricTreeMaps){
@@ -117,6 +117,25 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     System.out.println("Report generated");
 
   }
+
+  private void disconnectListeners(){
+    if (bluejInstance != null){
+      bluejInstance.removeExtensionEventListener(this);
+      bluejInstance.removePackageListener(packageListner);
+      bluejInstance.removeClassListener(classListner);
+      bluejInstance.removeCompileListener(compileListner);
+      bluejInstance.removeInvocationFinishedListener(invokeListner);
+    }
+  }
+
+  private void printEndingMetricMessage(){
+    System.out.println("Extension terminated.");
+    System.out.println("Total sesstion time: "+ getTotalSessionTime());
+    System.out.println("Total Idle time: "+totalIdleTime);
+    System.out.println("Total active time: "+(getTotalSessionTime() - totalIdleTime));
+  }
+
+
 
   @Override 
   public boolean isCompatible(){
