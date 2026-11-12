@@ -18,7 +18,7 @@ public class JSONFileGenerator implements ReportPublisher {
 
       ObjectMapper mapper = new ObjectMapper();
       mapper.writerWithDefaultPrettyPrinter().writeValue(file, compileTreeMaps(listenerMetricsTreeMaps));
-        
+      //TreeMap<String,Data> metrics = mapper.readTree(new File ("PluginMetrics.json"),listenerMetricsTreeMap.class)
       System.out.println("JSON file created.");
     }catch(Exception e) {
       e.printStackTrace();

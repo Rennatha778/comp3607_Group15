@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
 public class ActivityAnalyzerTest {
-/* 
 
-    @Test
+
+  /*   @Test
     public void testActiveTime() {
         long actual = ActivityAnalyzer.activeTime(120000, 45000); // testing a 2min code session wiith 45 secs idle time
 
@@ -36,13 +36,13 @@ public class ActivityAnalyzerTest {
 
         Assertions.assertEquals(60.0, actual, 0.001);
     }
-
-    @Test
+ */
+    /* @Test
     public void testZeroCompiles() {
 
-        double actual = ActivityAnalyzer.compileSuccessRate(0, 0); // testing no compilation attempts
+        double actual = CompileDataCollection.getcompileSuccessRate(0, 0); // testing no compilation attempts
 
         Assertions.assertEquals(0.0, actual, 0.001);
-    }
- */
+    } */
+
 }

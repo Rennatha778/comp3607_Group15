@@ -9,6 +9,7 @@ import bluej.extensions2.editor.JavaEditor;
 import bluej.extensions2.event.ClassEvent;
 import bluej.extensions2.event.ClassListener;
 import java.util.TreeMap;
+import java.util.ArrayList;
 
 
 
@@ -30,11 +31,12 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   BClass[] classes = null;
   BMethod[] classMethods;
   int classesSize;
+  ArrayList<BClass> bClasses = new ArrayList<BClass>();
 
   TreeMap<String,Long>removedClassesTreeMap = new TreeMap<String,Long>();
   TreeMap<String,Long>createdClassesTreeMap = new TreeMap<String,Long>();
   TreeMap<String,Long>modifiedClassesTreeMap = new TreeMap<String,Long>();
-  TreeMap<String,Long>createdMethodsTreeMap = new TreeMap<String,Long>();;
+  TreeMap<String,Long>createdMethodsTreeMap = new TreeMap<String,Long>();
     
     
   public Data getMetricData(){
@@ -59,7 +61,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     if(this.classes != null && checkName(classEvent.getOldName(),classEvent)){
       modifiedClassesTreeMap.put(classEvent.getBClass().getName(),timeChange);
       System.out.println("Name changed successfully:");
-      updateClasses(classEvent);
+      //updateClasses(classEvent);
     }
 
   }
@@ -68,29 +70,56 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   public void classRemoved(ClassEvent classEvent){
     Long timeRemoved = System.currentTimeMillis();
 
-    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !removedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+    if(!checkName(classEvent.getBClass().getName(),classEvent) && !removedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
       removedClassesTreeMap.put(classEvent.getBClass().getName(),timeRemoved);
       numClassesRemoved++;
-      updateClasses(classEvent);
+      //updateClasses(classEvent);
+      bClasses.remove(classEvent.getBClass());
     }
       
     System.out.println(classEvent.getBClass().getName() + " was removed.");
   }
 
   private synchronized void classCreated(Long time, ClassEvent classEvent){
-    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+    /* if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
       createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
       System.out.println("Created class:"+classEvent.getBClass().getName());
       updateClasses(classEvent);
-    }
+    } */
+
+   if(bClasses != null && !bClasses.contains(classEvent.getBClass()) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+      createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
+      System.out.println("Created class:"+classEvent.getBClass().getName());
+      bClasses.add(classEvent.getBClass());
   }
+}
 
   private synchronized void classModified(Long time, ClassEvent classEvent){
-    if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !modifiedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+    /* if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !modifiedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
       modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
       System.out.println("Created class:"+classEvent.getBClass().getName());
-      updateClasses(classEvent);
-    }
+      //updateClasses(classEvent);
+    } */
+      if(bClasses != null){
+        modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
+        System.out.println("Modified class:"+classEvent.getBClass().getName());
+      }
+
+  }
+
+  @Override 
+  public synchronized void classStateChanged(ClassEvent classEvent){
+    currTypedTime = System.currentTimeMillis();
+    if(!bClasses.contains(classEvent.getBClass())){
+      classCreated(currTypedTime, classEvent);
+    }else{
+      classModified(currTypedTime,classEvent);
+      trackTypeTime(classEvent);
+    } 
+      
+    numStatechanges++;
+    System.out.println(classEvent.getClass().getName() + " was changed.");
+
   }
 
   private void trackTypeTime(ClassEvent classEvent){
@@ -110,7 +139,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
       }
       prevTypedCount = currTypedCount;
       prevTypedTime = currTypedTime;
-      updateClasses(classEvent);
+      //updateClasses(classEvent);
      }
         
     }catch(ProjectNotOpenException e){
@@ -122,20 +151,25 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   }
 
   public synchronized void updateClasses(ClassEvent classEvent){
-    try{
-      if(classes != null && currPackage != null){
-        this.classes = currPackage.getClasses();
+    /* try{
+      if(currentPackage!= null){
+        /* this.classes = this.currPackage.getClasses();
+        classesSize = classes.length;
+        System.out.println("Classes size :"+classesSize); 
+        for(BClass bc : currentPackage.getClasses()){
+          bClasses.add(bc);
+        }
       }
-        
+    
     }catch(ProjectNotOpenException e){
       System.err.println("PACKAGE NOT OPENED!");
     }catch(PackageNotFoundException e){
       System.err.println("PACKAGE NOT OPENED!");
-    }
+    } */
   }
 
   private synchronized boolean checkName(String name, ClassEvent classEvent){
-    updateClasses(classEvent);
+    //updateClasses(classEvent);
     if(this.classes != null && classes.length != 0){
       for(BClass bc : classes){
         if(name.equals(bc.getName())){
@@ -146,28 +180,20 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     return false;
   }
 
-  @Override 
-  public synchronized void classStateChanged(ClassEvent classEvent){
-    currTypedTime = System.currentTimeMillis();
-
-    classCreated(currTypedTime, classEvent);
-    classModified(currTypedTime,classEvent);
-      
-    trackTypeTime(classEvent);
-      
-    numStatechanges++;
-    System.out.println(classEvent.getClass().getName() + " was changed.");
-
-  }
+  
 
   public void getPackageInfo(BPackage currentPackage){
     this.currPackage = currentPackage;
       
     try{
       if(currentPackage!= null){
-        this.classes = this.currPackage.getClasses();
+        /* this.classes = this.currPackage.getClasses();
         classesSize = classes.length;
-        System.out.println("Classes size :"+classesSize);
+        System.out.println("Classes size :"+classesSize); */
+        bClasses.clear();
+        for(BClass bc : currentPackage.getClasses()){
+          bClasses.add(bc);
+        }
       }
     
     }catch(ProjectNotOpenException e){
@@ -175,6 +201,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     }catch(PackageNotFoundException e){
       System.err.println("PACKAGE NOT OPENED!");
     }
+    
   }   
 
 }

@@ -39,8 +39,14 @@ public class PDFFileGenerator implements ReportPublisher {
 
 
 public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
-  dataTreeMap = listenersMetricsTreeMap;
 
+  dataTreeMap = listenersMetricsTreeMap;
+  TreeMapTraverser treeMapTraverser = new TreeMapTraverser();
+  int totalSessionTime = (int) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Number_of_'Expected'_Errors");
+  
+  /* if(totalSessionTime = null){
+    totalSessionTime = -1;
+  } */
     
 
   try (PDDocument pdfDocument = new PDDocument()) {
@@ -54,19 +60,20 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
 
    PDPageContentStream pageContent1 = new PDPageContentStream(pdfDocument, page1);
    PDPageContentStream pageContent2 = new PDPageContentStream(pdfDocument, page2);
-
+   
    DefaultPieDataset<String> sessionPieChar = new DefaultPieDataset<>();
 
-   DataContainer metricNames = new DataCollection(new DataAdapter(dataTreeMap));
+   /* DataContainer metricNames = new DataCollection(new DataAdapter(dataTreeMap));
 
    DataIterator nameIterator = metricNames.getDataIterator(0);
-   DataIterator dataIterator = metricNames.getDataIterator(1);
+   DataIterator dataIterator = metricNames.getDataIterator(1); */
     
    pageContent1.beginText();
    pageContent1.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA),12);
    pageContent1.newLineAtOffset(100, 700);
+   pageContent1.showText("Expected errors: "+ String.valueOf(totalSessionTime));
 
-   while(nameIterator.hasNext()){
+   /* while(nameIterator.hasNext()){
      pageContent1.showText((String)nameIterator.next());
      pageContent1.newLineAtOffset(0, -27);
 
@@ -146,14 +153,14 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
          System.out.println(String.valueOf((long)innerTreeMapTreeIterator.next()));
        }
      }
-    
    }
+   */
    pageContent1.endText();
    pageContent1.close();
 
 
-  sessionPieChar.setValue("Total Idle Time", idolTime);
-  sessionPieChar.setValue("Total Active Time", activeTime);
+  //sessionPieChar.setValue("Total Idle Time", idolTime);
+  //sessionPieChar.setValue("Total Active Time", activeTime);
   JFreeChart sessionPieChart = ChartFactory.createPieChart("Session Breakdown",sessionPieChar,true,true,false);
   
   PiePlot plot = (PiePlot) sessionPieChart.getPlot();

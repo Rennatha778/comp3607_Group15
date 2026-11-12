@@ -109,4 +109,8 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
     System.out.println("Compile warning!");
   }
 
+  public int getcompileSuccessRate(){
+    return this.numCompileSuccessful;
+  }
+
 }
