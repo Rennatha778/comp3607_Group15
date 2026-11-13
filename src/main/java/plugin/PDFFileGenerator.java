@@ -42,11 +42,6 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
 
   dataTreeMap = listenersMetricsTreeMap;
   TreeMapTraverser treeMapTraverser = new TreeMapTraverser();
-  int totalSessionTime = (int) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Number_of_'Expected'_Errors");
-  
-  /* if(totalSessionTime = null){
-    totalSessionTime = -1;
-  } */
     
 
   try (PDDocument pdfDocument = new PDDocument()) {
@@ -61,106 +56,37 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
    PDPageContentStream pageContent1 = new PDPageContentStream(pdfDocument, page1);
    PDPageContentStream pageContent2 = new PDPageContentStream(pdfDocument, page2);
    
-   DefaultPieDataset<String> sessionPieChar = new DefaultPieDataset<>();
+   
 
-   /* DataContainer metricNames = new DataCollection(new DataAdapter(dataTreeMap));
-
-   DataIterator nameIterator = metricNames.getDataIterator(0);
-   DataIterator dataIterator = metricNames.getDataIterator(1); */
     
    pageContent1.beginText();
    pageContent1.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA),12);
    pageContent1.newLineAtOffset(100, 700);
-   pageContent1.showText("Expected errors: "+ String.valueOf(totalSessionTime));
-
-   /* while(nameIterator.hasNext()){
-     pageContent1.showText((String)nameIterator.next());
-     pageContent1.newLineAtOffset(0, -27);
-
-     Data data = (Data)dataIterator.next();
-
-     DataContainer subMetricInt = new DataCollection(new IntAdapter(data.getIntTreeMap()));
-     DataCollection subMetricLong = new DataCollection(new LongAdapter(data.getLongTreeMap()));
-     DataContainer objectionCreation = new DataCollection(new TreeAdapter(data.getObjectCreationMap()));
-      
-
-     DataIterator subNameIntIterator = subMetricInt.getDataIterator(0);
-     DataIterator subDataIntIterator = subMetricInt.getDataIterator(1);
-      
-      
-     while(subNameIntIterator.hasNext()){
-       String intlable = (String)subNameIntIterator.next();
-       pageContent1.showText(intlable);
-       names.add(intlable);
-
-       pageContent1.showText(": ");
-
-       int intdata = ((int)subDataIntIterator.next());
-       intData.add(intdata);
-       pageContent1.showText(String.valueOf(intdata));
-       pageContent1.newLineAtOffset(0, -24);
-
-       if(intlable == "'Expected' Errors"){
-         expectedErrors = intdata;
-       }else if(intlable == "'Symbol' Errors"){
-         symbolErrors = intdata;
-       }else if(intlable == "'Unclosed' Errors"){
-         unclosedErros = intdata;
-       }else if (intlable == "'Return' Errors"){
-         returnErrors = intdata;
-       }else if(intlable == "Other Errors"){
-         otherErrors = intdata;
-      }
-     }
-
-     DataIterator subNameLongIterator = subMetricLong.getDataIterator(0);
-     DataIterator subDataLongIterator = subMetricLong.getDataIterator(1);
-     while(subNameLongIterator.hasNext()){
-       String longlable = (String)subNameLongIterator.next();
-       names.add(longlable);
-       pageContent1.showText(longlable);
-
-       pageContent1.showText(": ");
-       long longdata = (long)subDataLongIterator.next();
-       pageContent1.showText(String.valueOf(longdata));
-       pageContent1.newLineAtOffset(0, -24);
-
-       if(longlable == "activeTypingTime"){
-         activeTime = longdata;
-       }else if(longlable == "idleTypingTime"){
-         idolTime = longdata;
-       }
-     }
-
-     DataIterator subOuterOCNameIterator = objectionCreation.getDataIterator(0);
-     DataIterator subOuterTreeMapIterator = objectionCreation.getDataIterator(1);
-
-     while(subOuterOCNameIterator.hasNext()){
-       System.out.println("Outer OC Key:"+(String)subOuterOCNameIterator.next());
-
-       TreeMap<String, TreeMap<String,Long>> innerTreeMapCast = (TreeMap<String, TreeMap<String,Long>>) subOuterTreeMapIterator.next();
-
-       DataContainer innerTreeMap = new DataCollection(new TreeAdapter(innerTreeMapCast));
-
-       DataIterator innerTreeMapNameIterator = innerTreeMap.getDataIterator(0);
-       DataIterator innerTreeMapTreeIterator = innerTreeMap.getDataIterator(1);
-
-        
-       while(innerTreeMapNameIterator.hasNext()){
-         String Key = (String) innerTreeMapNameIterator.next();
-         System.out.println(Key);
-
-         System.out.println(String.valueOf((long)innerTreeMapTreeIterator.next()));
-       }
-     }
-   }
-   */
+   //pageContent1.showText("Expected errors: "+ String.valueOf(totalSessionTime));
+   String[] headings = {"Metric Name", "Metric Value"};
+   String[] metricNames = {"Total_Active_Typing_Time", "Total_Idle_Typing_Time"};
+   long[] metricValues = new long[metricNames.length];
+  for(int i = 0; i < metricNames.length; i++){
+    Long val = (long) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, metricNames[i]);
+    System.out.println(val);
+    if(val != null){
+      metricValues[i] = val;
+    }else{
+      System.out.println("A value is null");
+    }
+  }
+  Object[] combinedArray = {metricNames,metricValues};
+  GenerateTable generateTable = new GenerateTable();
+  generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1);
+  
+  
    pageContent1.endText();
    pageContent1.close();
 
+   DefaultPieDataset<String> sessionPieChar = new DefaultPieDataset<>();
+   sessionPieChar.setValue(metricNames[0],metricValues[0]);
+   sessionPieChar.setValue(metricNames[1],metricValues[1]);
 
-  //sessionPieChar.setValue("Total Idle Time", idolTime);
-  //sessionPieChar.setValue("Total Active Time", activeTime);
   JFreeChart sessionPieChart = ChartFactory.createPieChart("Session Breakdown",sessionPieChar,true,true,false);
   
   PiePlot plot = (PiePlot) sessionPieChart.getPlot();

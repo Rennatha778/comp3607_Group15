@@ -70,7 +70,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   public void classRemoved(ClassEvent classEvent){
     Long timeRemoved = System.currentTimeMillis();
 
-    if(!checkName(classEvent.getBClass().getName(),classEvent) && !removedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+    if(bClasses.contains(classEvent.getBClass()) && !removedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
       removedClassesTreeMap.put(classEvent.getBClass().getName(),timeRemoved);
       numClassesRemoved++;
       //updateClasses(classEvent);
@@ -81,26 +81,16 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   }
 
   private synchronized void classCreated(Long time, ClassEvent classEvent){
-    /* if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
-      createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
-      System.out.println("Created class:"+classEvent.getBClass().getName());
-      updateClasses(classEvent);
-    } */
-
-   if(bClasses != null && !bClasses.contains(classEvent.getBClass()) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
-      createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
-      System.out.println("Created class:"+classEvent.getBClass().getName());
-      bClasses.add(classEvent.getBClass());
+      if(!bClasses.contains(classEvent.getBClass()) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+        createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
+        System.out.println("Created class:"+classEvent.getBClass().getName());
+        bClasses.add(classEvent.getBClass());
+      }
+   
   }
-}
 
   private synchronized void classModified(Long time, ClassEvent classEvent){
-    /* if(this.classes != null && !checkName(classEvent.getBClass().getName(),classEvent) && !modifiedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
-      modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
-      System.out.println("Created class:"+classEvent.getBClass().getName());
-      //updateClasses(classEvent);
-    } */
-      if(bClasses != null){
+      if(!bClasses.isEmpty()){
         modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
         System.out.println("Modified class:"+classEvent.getBClass().getName());
       }
@@ -110,12 +100,19 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   @Override 
   public synchronized void classStateChanged(ClassEvent classEvent){
     currTypedTime = System.currentTimeMillis();
-    if(!bClasses.contains(classEvent.getBClass())){
-      classCreated(currTypedTime, classEvent);
-    }else{
+    try{
+      for(BClass bc :classEvent.getPackage().getClasses()){
+        bClasses.add(bc);
+      }
+      classCreated(currTypedTime,classEvent);
       classModified(currTypedTime,classEvent);
       trackTypeTime(classEvent);
-    } 
+    }catch(ProjectNotOpenException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }catch(PackageNotFoundException e){
+      System.err.println("PACKAGE NOT OPENED!");
+    }
+    
       
     numStatechanges++;
     System.out.println(classEvent.getClass().getName() + " was changed.");
@@ -170,26 +167,23 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
 
   private synchronized boolean checkName(String name, ClassEvent classEvent){
     //updateClasses(classEvent);
-    if(this.classes != null && classes.length != 0){
+    //if(this.classes != null && classes.length != 0){
       for(BClass bc : classes){
         if(name.equals(bc.getName())){
           return true;
         }
       }
-    }
+    //}
     return false;
   }
 
   
 
-  public void getPackageInfo(BPackage currentPackage){
+  /* public void getPackageInfo(BPackage currentPackage){
     this.currPackage = currentPackage;
       
     try{
       if(currentPackage!= null){
-        /* this.classes = this.currPackage.getClasses();
-        classesSize = classes.length;
-        System.out.println("Classes size :"+classesSize); */
         bClasses.clear();
         for(BClass bc : currentPackage.getClasses()){
           bClasses.add(bc);
@@ -203,5 +197,5 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     }
     
   }   
-
+ */
 }

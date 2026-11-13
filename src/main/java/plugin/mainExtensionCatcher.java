@@ -71,7 +71,7 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     }else if (event instanceof ClassEvent){
       //BPackage sent to classListener so that it can track the original number of classes in the package before any state changes
       if(this.bluejInstance.getCurrentPackage() != null){
-        classListner.getPackageInfo(this.bluejInstance.getCurrentPackage());
+        //classListner.getPackageInfo(this.bluejInstance.getCurrentPackage());
         System.out.println("Package Info sent");
       }
       numClassEvent++;
@@ -80,7 +80,7 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
       newPackageEvent = (PackageEvent) event;
       //BPackage sent to classListener so that it can track the original number of classes in the package before any state changes
       if(newPackageEvent != null){
-        classListner.getPackageInfo(newPackageEvent.getPackage());
+        //classListner.getPackageInfo(newPackageEvent.getPackage());
       }
     }else if( event instanceof InvocationFinishedEvent){
       numInvokeFinishedEvent++;

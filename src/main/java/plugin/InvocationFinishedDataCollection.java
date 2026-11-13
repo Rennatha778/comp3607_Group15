@@ -19,5 +19,6 @@ public class InvocationFinishedDataCollection implements InvocationFinishedListe
     public void invocationFinished(InvocationFinishedEvent invocationFinishedEvent){
       numMethodRuns++;
       System.out.println(invocationFinishedEvent.getMethodName() +" finished execution");
+
     }
-  }
+}
