@@ -35,13 +35,13 @@ public class PDFFileGenerator implements ReportPublisher {
   int unclosedErros;
   int returnErrors;
   int otherErrors;
-
+  TreeMapTraverser treeMapTraverser;
 
 
 public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
 
   dataTreeMap = listenersMetricsTreeMap;
-  TreeMapTraverser treeMapTraverser = new TreeMapTraverser();
+  treeMapTraverser = new TreeMapTraverser();
     
 
   try (PDDocument pdfDocument = new PDDocument()) {
@@ -59,33 +59,47 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
    
 
     
-   pageContent1.beginText();
+   //pageContent1.beginText();
    pageContent1.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA),12);
-   pageContent1.newLineAtOffset(100, 700);
+   //pageContent1.newLineAtOffset(100, 700);
    //pageContent1.showText("Expected errors: "+ String.valueOf(totalSessionTime));
    String[] headings = {"Metric Name", "Metric Value"};
-   String[] metricNames = {"Total_Active_Typing_Time", "Total_Idle_Typing_Time"};
-   long[] metricValues = new long[metricNames.length];
-  for(int i = 0; i < metricNames.length; i++){
-    Long val = (long) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, metricNames[i]);
-    System.out.println(val);
-    if(val != null){
-      metricValues[i] = val;
-    }else{
-      System.out.println("A value is null");
-    }
-  }
+   String[] metricNames = {"Total_Active_Time","Total_Idle_Time","Total_Session_Time","Total_Active_Typing_Time","Total_Idle_Typing_Time","Average_Compile_Time","Number_of_Methods_Ran","Number_of_Packages_Opened"};
+   Object[] metricValues = new Object[metricNames.length];
+   metricValues = getMetricValues(metricNames);
+   
   Object[] combinedArray = {metricNames,metricValues};
   GenerateTable generateTable = new GenerateTable();
   generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1);
   
+
+  String[] creationHeadings = {"Class Name", "Creation Time", "Modification Time", "Deletion Time"};
+  String[] classNames;
+  TreeMap<String,Long> allCreatedClass = new TreeMap<String,Long>();
+  allCreatedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Created_Classes");
+
+  TreeMap<String,Long> allModifiedClass = new TreeMap<String,Long>();
+  allModifiedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Modified_Classes");
   
-   pageContent1.endText();
+  TreeMap<String,Long> allRemovedClass = new TreeMap<String,Long>();
+  allRemovedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Removed_Classes");
+
+   String[] createdClasses = new String[ allModifiedClass.size() + allRemovedClass.size()];
+   
+   String[] metricNames = {"Total_Active_Time","Total_Idle_Time","Total_Session_Time","Total_Active_Typing_Time","Total_Idle_Typing_Time","Average_Compile_Time","Number_of_Methods_Ran","Number_of_Packages_Opened"};
+   Object[] metricValues = new Object[metricNames.length];
+   metricValues = getMetricValues(metricNames);
+   
+  Object[] combinedArray = {metricNames,metricValues};
+  GenerateTable generateTable = new GenerateTable();
+  generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1);
+  
+   //pageContent1.endText();
    pageContent1.close();
 
    DefaultPieDataset<String> sessionPieChar = new DefaultPieDataset<>();
-   sessionPieChar.setValue(metricNames[0],metricValues[0]);
-   sessionPieChar.setValue(metricNames[1],metricValues[1]);
+   sessionPieChar.setValue("Total_Active_Typing_Time", (long)treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Total_Active_Typing_Time"));
+   sessionPieChar.setValue("Total_Idle_Typing_Time",(long)treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Total_Idle_Typing_Time"));
 
   JFreeChart sessionPieChart = ChartFactory.createPieChart("Session Breakdown",sessionPieChar,true,true,false);
   
@@ -131,6 +145,20 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
       e.printStackTrace();
       System.out.println("PDF file was not created");
     }
+  }
+  public Object[] getMetricValues(String[] metricNames){
+      Object[] metricValues = new Object[metricNames.length];
+      for(int i = 0; i < metricNames.length; i++){
+        Object val = treeMapTraverser.getMetricValue(dataTreeMap, metricNames[i]);
+        System.out.println(val);
+      if(val != null){
+        metricValues[i] = val;
+      }else{
+        metricValues[i] = null;
+      }
+      
+    }
+    return metricValues;
   }
 }
 

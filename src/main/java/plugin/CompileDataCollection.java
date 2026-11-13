@@ -38,10 +38,10 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
     compileMetrics.addIntData("Total Errors",numErrors);
 
     if(numCompileFailed != 0 || numCompileSuccessful != 0)
-      compileMetrics.addLongData("averageCompileTime",totalCompileTime/(numCompileFailed + numCompileSuccessful));
+      compileMetrics.addLongData("Average_Compile_Time",totalCompileTime/(numCompileFailed + numCompileSuccessful));
 
     if(averageCorrectionTime != 0 && numErrors != 0)
-      compileMetrics.addLongData("Average Correction Time", averageCorrectionTime/numErrors);
+      compileMetrics.addLongData("Average_Correction_Time", averageCorrectionTime/numErrors);
     
     return compileMetrics;
   }
