@@ -6,12 +6,12 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 public class TableGenerator {
  
 
-  public void generateTableLong(String[] cn, Object[]ov, int rowNum, PDPageContentStream content1 ) throws IOException{
+  public int generateTableLong(String[] cn, Object[]ov, int rowNum, PDPageContentStream content1, int xValue, int yValue ) throws IOException{
     String[] coloumNames  = cn;
     Object[] colValues = ov;
     //String[] colNames = (String[])ov[0];
     int numCols = coloumNames.length; 
-    int x = 50, y = 700, movingy = 700, movingx = 50;
+    int x = xValue, y = yValue, movingy = 700, movingx = 50;
 
     //int largetsStringLenght = getLargestStringLenght((String[])colValues[0]) + 10;
     int largetsStringLenght = getLargestStringLenght((String[])colValues[0]);
@@ -91,11 +91,16 @@ public class TableGenerator {
 
     content1.endText();
     content1.beginText();
-    content1.newLineAtOffset(x, y - ((row + 1)* 15));
+    /* content1.newLineAtOffset(x, y - ((row + 1)* 15));
+    movingy = y - (row + 1)* 15; */
+    content1.newLineAtOffset(x, movingy - 10);
     printSpacerBar(content1,largetsStringLenght,colValues, coloumNames);
+    content1.endText();
     }catch(IOException e){
       System.out.println("Error in prinitng table");
     }
+
+    return movingy;
   }
 
   private int getLargestStringLenght(String[] strings){
@@ -118,7 +123,7 @@ public class TableGenerator {
     }catch(IOException e){
       System.out.println("Error Occured in printing spacer bar");
     }
-    
+
   }
 
   private int getSpacingBarLenght(Object[] colValues, String[] headings){

@@ -76,9 +76,13 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
    
   Object[] combinedArray = {metricNames,metricValues};
   TableGenerator generateTable = new TableGenerator();
-  generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1);
+  int newYValue = generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1,50,700);
   
-   //pageContent1.endText();
+  String[] ratioHeadings = {"Metrics","Ratio"};
+  String[] ratioMetricNames = {"Total_Idle_Time","Total_Active_Time"};
+  Object[] ratioValues = {4,5};
+  Object[] ratioColoumValues = {ratioMetricNames,ratioValues};
+  newYValue = generateTable.generateTableLong(ratioHeadings,ratioColoumValues,ratioMetricNames.length,pageContent1,50,newYValue-25);
    pageContent1.close();
    
 
@@ -96,9 +100,9 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
       
   PDImageXObject pdfImage = LosslessFactory.createFromImage(pdfDocument,pieCharImage);
 
-  float pieChartYLocation = page2.getMediaBox().getHeight() - 380;
-
-  pageContent2.drawImage(pdfImage,50, pieChartYLocation, 400, 300); 
+  float pieChartYLocation = page2.getMediaBox().getHeight() - 280;
+ 
+  pageContent2.drawImage(pdfImage,50, pieChartYLocation, 300, 225); 
 
     DefaultCategoryDataset programEventsDataset = new DefaultCategoryDataset();
 
@@ -115,8 +119,8 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
     BufferedImage errorImage = barChart.createBufferedImage(800, 600);
       
     PDImageXObject barChartImage = LosslessFactory.createFromImage(pdfDocument,errorImage);
-    float barChartYLocation = pieChartYLocation - 300 - 20;
-    //pageContent2.drawImage(barChartImage,30, barChartYLocation,400, 300);
+    float barChartYLocation = pieChartYLocation - 250;
+    pageContent2.drawImage(barChartImage,30, barChartYLocation,300, 225);
 
 
     try{
@@ -139,9 +143,6 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
         
       }
       
-      /* lineGraphData.addValue(1,"Class1","Data2");
-      lineGraphData.addValue(1,"Class1","Data3");
-      lineGraphData.addValue(1,"Class1","Data4"); */
       
       TaskSeriesCollection ganttChartDataset = new TaskSeriesCollection();
       ganttChartDataset.add(series);
@@ -150,8 +151,8 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
       BufferedImage objectCreationImage = ganttChart.createBufferedImage(800, 600);
       
       PDImageXObject objectCreationGantChart = LosslessFactory.createFromImage(pdfDocument,objectCreationImage);
-      float ganttChartYLocation = pieChartYLocation - 300 - 20;
-      pageContent2.drawImage(objectCreationGantChart,30, ganttChartYLocation,400, 300);
+      float ganttChartYLocation = barChartYLocation - 250;
+      pageContent2.drawImage(objectCreationGantChart,30, ganttChartYLocation,300, 225);
 
 
     }catch(IOException e){
