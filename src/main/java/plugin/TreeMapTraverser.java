@@ -12,9 +12,15 @@ public class TreeMapTraverser {
    DataIterator dataIterator = metricNames.getDataIterator(1);
 
    while(nameIterator.hasNext() && !found){
-    System.out.println((String)nameIterator.next());
+    String dataName = (String)nameIterator.next();
+    //System.out.println(dataName);
 
      Data data = (Data)dataIterator.next();
+
+     if(dataName.equals(metricName)){
+          found = true;
+          foundMetric = (Object) data;
+      }
 
      DataContainer subMetricInt = new DataCollection(new IntAdapter(data.getIntTreeMap()));
      DataCollection subMetricLong = new DataCollection(new LongAdapter(data.getLongTreeMap()));
@@ -54,10 +60,15 @@ public class TreeMapTraverser {
      DataIterator subOuterTreeMapIterator = objectionCreation.getDataIterator(1);
 
      while(subOuterOCNameIterator.hasNext() && !found){
-       System.out.println("Outer OC Key:"+(String)subOuterOCNameIterator.next());
+      String treeName = (String)subOuterOCNameIterator.next();
+      //System.out.println("Outer OC Key:"+treeName);
 
-       TreeMap<String, TreeMap<String,Long>> innerTreeMapCast = (TreeMap<String, TreeMap<String,Long>>) subOuterTreeMapIterator.next();
-
+      TreeMap<String, TreeMap<String,Long>> innerTreeMapCast = (TreeMap<String, TreeMap<String,Long>>) subOuterTreeMapIterator.next();
+      if(treeName.equals(metricName)){
+          found = true;
+          foundMetric = (Object)innerTreeMapCast;
+      }
+       
        DataContainer innerTreeMap = new DataCollection(new TreeAdapter(innerTreeMapCast));
 
        DataIterator innerTreeMapNameIterator = innerTreeMap.getDataIterator(0);
@@ -66,10 +77,10 @@ public class TreeMapTraverser {
         
        while(innerTreeMapNameIterator.hasNext() && !found){
          String Key = (String) innerTreeMapNameIterator.next();
-         System.out.println(Key);
+         //System.out.println(Key);
         
          long value = (long)innerTreeMapTreeIterator.next();
-         System.out.println(String.valueOf(value));
+         //System.out.println(String.valueOf(value));
          if(Key.equals(metricName)){
           found = true;
           foundMetric = value;

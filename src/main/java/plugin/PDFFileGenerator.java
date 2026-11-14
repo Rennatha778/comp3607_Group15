@@ -10,31 +10,44 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import javax.script.SimpleBindings;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.category.DefaultIntervalCategoryDataset;
+import org.jfree.data.category.IntervalCategoryDataset;
+import org.jfree.data.gantt.Task;
+import org.jfree.data.gantt.TaskSeries;
+import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.time.SimpleTimePeriod;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.xy.XYDataset;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.security.KeyStore.Entry;
 
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.jfree.chart.plot.PiePlot;
+import java.util.Map;
 
 public class PDFFileGenerator implements ReportPublisher {
   TreeMap<String,Data> dataTreeMap;
-  ArrayList<String> names = new ArrayList<String>();
+  /* ArrayList<String> names = new ArrayList<String>();
   ArrayList<Integer> intData = new ArrayList<Integer>();
-  ArrayList<Long> longData = new ArrayList<Long>();
-
-  long activeTime;
+  ArrayList<Long> longData = new ArrayList<Long>(); */
+  /* long activeTime;
   long idolTime;
   int expectedErrors;
   int symbolErrors;
   int unclosedErros;
   int returnErrors;
-  int otherErrors;
+  int otherErrors; */
+
   TreeMapTraverser treeMapTraverser;
 
 
@@ -51,41 +64,12 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
    PDPage page2 = new PDPage();
    pdfDocument.addPage(page2);
 
-    
-
    PDPageContentStream pageContent1 = new PDPageContentStream(pdfDocument, page1);
    PDPageContentStream pageContent2 = new PDPageContentStream(pdfDocument, page2);
    
-   
-
-    
-   //pageContent1.beginText();
    pageContent1.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA),12);
-   //pageContent1.newLineAtOffset(100, 700);
-   //pageContent1.showText("Expected errors: "+ String.valueOf(totalSessionTime));
+
    String[] headings = {"Metric Name", "Metric Value"};
-   String[] metricNames = {"Total_Active_Time","Total_Idle_Time","Total_Session_Time","Total_Active_Typing_Time","Total_Idle_Typing_Time","Average_Compile_Time","Number_of_Methods_Ran","Number_of_Packages_Opened"};
-   Object[] metricValues = new Object[metricNames.length];
-   metricValues = getMetricValues(metricNames);
-   
-  Object[] combinedArray = {metricNames,metricValues};
-  GenerateTable generateTable = new GenerateTable();
-  generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1);
-  
-
-  String[] creationHeadings = {"Class Name", "Creation Time", "Modification Time", "Deletion Time"};
-  String[] classNames;
-  TreeMap<String,Long> allCreatedClass = new TreeMap<String,Long>();
-  allCreatedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Created_Classes");
-
-  TreeMap<String,Long> allModifiedClass = new TreeMap<String,Long>();
-  allModifiedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Modified_Classes");
-  
-  TreeMap<String,Long> allRemovedClass = new TreeMap<String,Long>();
-  allRemovedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Removed_Classes");
-
-   String[] createdClasses = new String[ allModifiedClass.size() + allRemovedClass.size()];
-   
    String[] metricNames = {"Total_Active_Time","Total_Idle_Time","Total_Session_Time","Total_Active_Typing_Time","Total_Idle_Typing_Time","Average_Compile_Time","Number_of_Methods_Ran","Number_of_Packages_Opened"};
    Object[] metricValues = new Object[metricNames.length];
    metricValues = getMetricValues(metricNames);
@@ -96,6 +80,7 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
   
    //pageContent1.endText();
    pageContent1.close();
+   
 
    DefaultPieDataset<String> sessionPieChar = new DefaultPieDataset<>();
    sessionPieChar.setValue("Total_Active_Typing_Time", (long)treeMapTraverser.getMetricValue(listenersMetricsTreeMap, "Total_Active_Typing_Time"));
@@ -117,11 +102,12 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
 
     DefaultCategoryDataset programEventsDataset = new DefaultCategoryDataset();
 
-    programEventsDataset.addValue(expectedErrors,"Error","Expected");
-    programEventsDataset.addValue(symbolErrors,"Error","Symbol");
-    programEventsDataset.addValue(unclosedErros,"Error","Unclosed");
-    programEventsDataset.addValue(returnErrors,"Error","Return");
-    programEventsDataset.addValue(otherErrors,"Error","Other");
+    programEventsDataset.addValue((int)treeMapTraverser.getMetricValue(dataTreeMap, "Number_of_'Expected'_Errors"),"Error","Expected");
+    programEventsDataset.addValue((int)treeMapTraverser.getMetricValue(dataTreeMap, "Number_of_'Return'_Errors"),"Error","Return");
+    programEventsDataset.addValue((int)treeMapTraverser.getMetricValue(dataTreeMap, "Number_of_'Symbol'_Errors"),"Error","Symbol");
+    programEventsDataset.addValue((int)treeMapTraverser.getMetricValue(dataTreeMap, "Number_of_'Unclosed'_Errors"),"Error","Unclosed");
+    programEventsDataset.addValue((int)treeMapTraverser.getMetricValue(dataTreeMap, "Number_of_Other_Errors"),"Error","Others");
+
   
     JFreeChart barChart = ChartFactory.createBarChart("Error Frequency Breakdown","Frequency", "Error", programEventsDataset);
 
@@ -130,7 +116,49 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
       
     PDImageXObject barChartImage = LosslessFactory.createFromImage(pdfDocument,errorImage);
     float barChartYLocation = pieChartYLocation - 300 - 20;
-    pageContent2.drawImage(barChartImage,30, barChartYLocation,400, 300);
+    //pageContent2.drawImage(barChartImage,30, barChartYLocation,400, 300);
+
+
+    try{
+      //long sessionStartTime = (long)treeMapTraverser.getMetricValue(dataTreeMap, "Session_Start_Time");
+      long sessionEndTime = (long)treeMapTraverser.getMetricValue(dataTreeMap, "Session_End_Time");
+      TaskSeries series = new TaskSeries("Class Creation");
+      TreeMap<String,Long>createdObjects = (TreeMap<String,Long>)treeMapTraverser.getMetricValue(dataTreeMap, "Created_Classes");
+      TreeMap<String,Long>removedObjects = (TreeMap<String,Long>)treeMapTraverser.getMetricValue(dataTreeMap, "Removed_Classes");
+      //IntervalCategoryDataset lineGraphData = new DefaultIntervalCategoryDataset;
+      
+      for(Map.Entry<String,Long> classDataEntry : createdObjects.entrySet()){
+        Long endTime = removedObjects.get(classDataEntry.getKey());
+        System.out.println(classDataEntry.getKey()+" :"+classDataEntry.getValue()+" "+endTime);
+        if(endTime != null){
+          series.add(new Task(classDataEntry.getKey(),new SimpleTimePeriod(classDataEntry.getValue(),endTime)));
+        }else{
+          series.add(new Task(classDataEntry.getKey(),new SimpleTimePeriod((classDataEntry.getValue()),sessionEndTime)));
+        }
+        //lineGraphData.addValue((Long)treeMapTraverser.getMetricValue(createdObjects, className),"Time Class Created","ClassName");
+        
+      }
+      
+      /* lineGraphData.addValue(1,"Class1","Data2");
+      lineGraphData.addValue(1,"Class1","Data3");
+      lineGraphData.addValue(1,"Class1","Data4"); */
+      
+      TaskSeriesCollection ganttChartDataset = new TaskSeriesCollection();
+      ganttChartDataset.add(series);
+      JFreeChart ganttChart = ChartFactory.createGanttChart("Class Creation Chart","Class","Time",ganttChartDataset,true,true,false);
+      
+      BufferedImage objectCreationImage = ganttChart.createBufferedImage(800, 600);
+      
+      PDImageXObject objectCreationGantChart = LosslessFactory.createFromImage(pdfDocument,objectCreationImage);
+      float ganttChartYLocation = pieChartYLocation - 300 - 20;
+      pageContent2.drawImage(objectCreationGantChart,30, ganttChartYLocation,400, 300);
+
+
+    }catch(IOException e){
+      e.printStackTrace();
+    }
+
+
     pageContent2.close();
 
     System.out.println("Charts created.");
@@ -159,6 +187,39 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
       
     }
     return metricValues;
+  }
+  public String[] getAllObjectNames(){
+    TreeMap<String,Long> allCreatedClass = new TreeMap<String,Long>();
+    allCreatedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(dataTreeMap, "Created_Classes");
+  
+    TreeMap<String,Long> allModifiedClass = new TreeMap<String,Long>();
+    allModifiedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(dataTreeMap, "Modified_Classes");
+  
+    TreeMap<String,Long> allRemovedClass = new TreeMap<String,Long>();
+    allRemovedClass = (TreeMap<String,Long>) treeMapTraverser.getMetricValue(dataTreeMap, "Removed_Classes");
+
+    String[] classNames = new String[ allModifiedClass.size() + allRemovedClass.size()];
+    int i = 0;
+    for(String className : allCreatedClass.keySet()){
+      classNames[i] = className;
+      i++;
+    }
+
+    for(String className : allModifiedClass.keySet()){
+      classNames[i] = className;
+      i++;
+    }
+
+    for(String className : allRemovedClass.keySet()){
+      classNames[i] = className;
+      i++;
+    }
+
+    return classNames;
+  }
+
+  private void createObjectCreationTable(){
+
   }
 }
 

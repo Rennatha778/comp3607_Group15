@@ -101,8 +101,8 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   public synchronized void classStateChanged(ClassEvent classEvent){
     currTypedTime = System.currentTimeMillis();
     try{
-      for(BClass bc :classEvent.getPackage().getClasses()){
-        bClasses.add(bc);
+      for(BClass bClass :classEvent.getPackage().getClasses()){
+        bClasses.add(bClass);
       }
       classCreated(currTypedTime,classEvent);
       classModified(currTypedTime,classEvent);
@@ -120,7 +120,6 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   }
 
   private void trackTypeTime(ClassEvent classEvent){
-    currBClass = classEvent.getBClass();
     try{
       if(classEvent.getBClass().getJavaEditorIfOpen() != null){
         currClassEditor = classEvent.getBClass().getJavaEditorIfOpen();
@@ -136,7 +135,6 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
       }
       prevTypedCount = currTypedCount;
       prevTypedTime = currTypedTime;
-      //updateClasses(classEvent);
      }
         
     }catch(ProjectNotOpenException e){
@@ -147,55 +145,12 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
       
   }
 
-  public synchronized void updateClasses(ClassEvent classEvent){
-    /* try{
-      if(currentPackage!= null){
-        /* this.classes = this.currPackage.getClasses();
-        classesSize = classes.length;
-        System.out.println("Classes size :"+classesSize); 
-        for(BClass bc : currentPackage.getClasses()){
-          bClasses.add(bc);
-        }
-      }
-    
-    }catch(ProjectNotOpenException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    }catch(PackageNotFoundException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    } */
-  }
-
   private synchronized boolean checkName(String name, ClassEvent classEvent){
-    //updateClasses(classEvent);
-    //if(this.classes != null && classes.length != 0){
-      for(BClass bc : classes){
-        if(name.equals(bc.getName())){
-          return true;
-        }
+    for(BClass bClass : classes){
+      if(name.equals(bClass.getName())){
+         return true;
       }
-    //}
+    }
     return false;
   }
-
-  
-
-  /* public void getPackageInfo(BPackage currentPackage){
-    this.currPackage = currentPackage;
-      
-    try{
-      if(currentPackage!= null){
-        bClasses.clear();
-        for(BClass bc : currentPackage.getClasses()){
-          bClasses.add(bc);
-        }
-      }
-    
-    }catch(ProjectNotOpenException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    }catch(PackageNotFoundException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    }
-    
-  }   
- */
 }

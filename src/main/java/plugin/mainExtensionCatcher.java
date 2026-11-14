@@ -174,6 +174,8 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     mainExtentionCaterMetrics.addIntData("Compile_Events", numCompileEvent);
     mainExtentionCaterMetrics.addIntData("Invoke_Finished_Events", numInvokeFinishedEvent);
     mainExtentionCaterMetrics.addIntData("Package_Events", numPackageEvent);
+    mainExtentionCaterMetrics.addLongData("Session_Start_Time",sessionStartTime);
+    mainExtentionCaterMetrics.addLongData("Session_End_Time",sessionEndTime);
 
     return mainExtentionCaterMetrics;
   }
