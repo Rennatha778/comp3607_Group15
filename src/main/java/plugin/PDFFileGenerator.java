@@ -67,7 +67,7 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
    PDPageContentStream pageContent1 = new PDPageContentStream(pdfDocument, page1);
    PDPageContentStream pageContent2 = new PDPageContentStream(pdfDocument, page2);
    
-   pageContent1.setFont(new PDType1Font(Standard14Fonts.FontName.HELVETICA),12);
+   pageContent1.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER),12);
 
    String[] headings = {"Metric Name", "Metric Value"};
    String[] metricNames = {"Total_Active_Time","Total_Idle_Time","Total_Session_Time","Total_Active_Typing_Time","Total_Idle_Typing_Time","Average_Compile_Time","Number_of_Methods_Ran","Number_of_Packages_Opened"};
@@ -75,7 +75,7 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
    metricValues = getMetricValues(metricNames);
    
   Object[] combinedArray = {metricNames,metricValues};
-  GenerateTable generateTable = new GenerateTable();
+  TableGenerator generateTable = new TableGenerator();
   generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1);
   
    //pageContent1.endText();
