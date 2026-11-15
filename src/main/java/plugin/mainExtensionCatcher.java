@@ -41,7 +41,6 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     packageListner = new PackageDataCollection();
     invokeListner = new InvocationFinishedDataCollection();
   
-    
     bluejInstance.addExtensionEventListener(this);
     bluejInstance.addCompileListener(compileListner);
     bluejInstance.addClassListener(classListner);
@@ -70,19 +69,9 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     }else if(event instanceof CompileEvent){
       numCompileEvent++;
     }else if (event instanceof ClassEvent){
-      //BPackage sent to classListener so that it can track the original number of classes in the package before any state changes
-      if(this.bluejInstance.getCurrentPackage() != null){
-        //classListner.getPackageInfo(this.bluejInstance.getCurrentPackage());
-        System.out.println("Package Info sent");
-      }
       numClassEvent++;
     }else if (event instanceof PackageEvent){
       numPackageEvent++;
-      newPackageEvent = (PackageEvent) event;
-      //BPackage sent to classListener so that it can track the original number of classes in the package before any state changes
-      if(newPackageEvent != null){
-        //classListner.getPackageInfo(newPackageEvent.getPackage());
-      }
     }else if( event instanceof InvocationFinishedEvent){
       numInvokeFinishedEvent++;
     }
@@ -131,9 +120,9 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
 
   private void printEndingMetricMessage(){
     System.out.println("Extension terminated.");
-    System.out.println("Total sesstion time: "+ getTotalSessionTime());
+    System.out.println("Total sesstion time: "+ getTotalSessionTime(this.sessionEndTime,this.sessionStartTime));
     System.out.println("Total Idle time: "+totalIdleTime);
-    System.out.println("Total active time: "+(getTotalSessionTime() - totalIdleTime));
+    System.out.println("Total active time: "+(getTotalSessionTime(this.sessionEndTime,this.sessionStartTime) - totalIdleTime));
   }
 
 
@@ -158,16 +147,16 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
       return "A metric tracker plugin";
    }
 
-  public long getTotalSessionTime(){
-    if(this.sessionEndTime != 0 && this.sessionStartTime != 0)
-      return this.sessionEndTime - this.sessionStartTime;
-    return 0;
+  protected long getTotalSessionTime(long sessionEndTime, long sessionStartTime){
+    if(sessionEndTime != 0 && sessionStartTime != 0)
+      return sessionEndTime - sessionStartTime;
+    return (long) 0;
   }
 
   public Data getMetricData(){
     Data mainExtentionCaterMetrics = new Data();
-    mainExtentionCaterMetrics.addLongData("Total_Session_Time",getTotalSessionTime());
-    mainExtentionCaterMetrics.addLongData("Total_Active_Time",(getTotalSessionTime() - totalIdleTime));
+    mainExtentionCaterMetrics.addLongData("Total_Session_Time",getTotalSessionTime(this.sessionEndTime,this.sessionStartTime));
+    mainExtentionCaterMetrics.addLongData("Total_Active_Time",(getTotalSessionTime(this.sessionEndTime,this.sessionStartTime) - totalIdleTime));
     mainExtentionCaterMetrics.addLongData("Total_Idle_Time",totalIdleTime);
 
     mainExtentionCaterMetrics.addIntData("Application_Events", numApplicationEvent);

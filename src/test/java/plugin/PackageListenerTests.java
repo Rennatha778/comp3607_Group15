@@ -1,12 +1,24 @@
 package plugin;
-import bluej.extensions2.PackageNotFoundException;
-import bluej.extensions2.ProjectNotOpenException;
-import bluej.extensions2.event.PackageEvent;
-import bluej.extensions2.event.PackageListener;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeAll;
 
 public class PackageListenerTests {
-  PackageDataCollection testPackageListener = new PackageDataCollection();
-  testPackageListener.packageOpened(new Object()); 
+  static PackageDataCollection testPackageListener;
+
+  @BeforeAll
+  static void setup(){
+    testPackageListener = new PackageDataCollection();  
+  }
+    
   
-  //packageListner.packageOpened((PackageEvent)new Object());
+  @Test
+  void numProjectsOpened(){
+    testPackageListener.updateNumberOfPackagesOpened();
+    testPackageListener.updateNumberOfPackagesOpened();
+    testPackageListener.updateNumberOfPackagesOpened();
+    assertEquals(3,testPackageListener.getNumberOfPackagesOpened());
+  }
+  
 }

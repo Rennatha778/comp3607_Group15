@@ -19,7 +19,7 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
   @Override 
   public void packageOpened(PackageEvent packageEvent){ 
     try{
-      numPackagesOpened++;      
+      updateNumberOfPackagesOpened();      
       System.out.println(packageEvent.getPackage().getName() + " opened!");
 
     } catch(ProjectNotOpenException e){
@@ -41,5 +41,6 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
     }
     
   }
-  protected int getNumPackagesOpened(){return this.numPackagesOpened;}
+  protected void updateNumberOfPackagesOpened(){this.numPackagesOpened++;}
+  protected int getNumberOfPackagesOpened(){return this.numPackagesOpened;}
 }
