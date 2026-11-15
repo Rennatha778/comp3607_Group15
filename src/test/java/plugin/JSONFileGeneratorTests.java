@@ -1,14 +1,21 @@
 package plugin;
 
 import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Map;
 import java.util.TreeMap;
 import java.io.File;
+import java.io.IOException;
 
 public class JSONFileGeneratorTests {
   static TreeMap<String,Data> testerDataTreeMap;
@@ -19,6 +26,8 @@ public class JSONFileGeneratorTests {
   static Data testerData2;
   static JSONFileGenerator testerJsonFileGenerator;
   static TreeMapTraverser testerTreeMapTraverser;
+  static File jsonFile;
+  static TreeMap<String,Data> newMapWithJSONData;
 
   @BeforeAll
   static void setup(){
@@ -84,15 +93,31 @@ public class JSONFileGeneratorTests {
   @Test
   void TestThatTreeMapGeneratesJSONFile(){
     String filePath = "C:\\Users\\Owner\\OneDrive\\Documents\\COMP 1601 Programs\\OOP II\\bluejplugin";
-    File jsonFile = (File)testerJsonFileGenerator.generateReport(testerDataTreeMap,filePath);
+    jsonFile = (File)testerJsonFileGenerator.generateReport(testerDataTreeMap,filePath);
     assertNotNull(jsonFile);
   }
 
   @Test
   void TestThatJSONFileNotCreated(){
     String filePath ="";
-    File jsonFile = (File)testerJsonFileGenerator.generateReport(testerDataTreeMap,filePath);
+    jsonFile = (File)testerJsonFileGenerator.generateReport(testerDataTreeMap,filePath);
     assertNull(jsonFile);
+  }
+
+  @Test
+  void TestForCorrectDataInNewJSONFile(){
+    String filePath = "C:\\Users\\Owner\\OneDrive\\Documents\\COMP 1601 Programs\\OOP II\\bluejplugin";
+    jsonFile = (File)testerJsonFileGenerator.generateReport(testerDataTreeMap,filePath);
+    ObjectMapper testerobjectMapper = new ObjectMapper();
+
+    try{
+       newMapWithJSONData = testerobjectMapper.readValue(jsonFile,new TypeReference<TreeMap<String,Data>>(){});
+       assertEquals(1,testerTreeMapTraverser.getMetricValue(newMapWithJSONData,"Test_Int_Metric_1"));
+    }catch(IOException e){
+      e.printStackTrace();
+      System.out.println("Unable to read from JSON file");
+    }
+    
   }
 
 }

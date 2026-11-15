@@ -27,9 +27,8 @@ public class JSONFileGenerator implements ReportPublisher {
     }catch(Exception e) {
       e.printStackTrace();
       System.out.println("Failed to create JSON file.");
+      return null;
     }
-
-    return null;
   }
 
   protected TreeMap<String,Data> compileTreeMaps(TreeMap<String,Data> listenerMetricsTreeMaps){
