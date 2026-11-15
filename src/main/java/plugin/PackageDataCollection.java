@@ -11,7 +11,7 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
 
   public Data getMetricData(){
     Data packageMetrics = new Data();
-    packageMetrics.addIntData("Number_of_Packages_Opened",numPackagesOpened);
+    packageMetrics.addIntData("Number_of_Packages_Opened",getNumberOfPackagesOpened());
 
     return packageMetrics;
   }

@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 
 public class MainExtensionCatcherTests {
-  static MainExtensionCatcherTests testerMainCatcher;
+  static mainExtensionCatcher testerMainCatcher;
   
   @BeforeAll
   static void setup(){
-    testerMainCatcher = new MainExtensionCatcherTests();
+    testerMainCatcher = new mainExtensionCatcher();
   }
 
   @Test

@@ -10,15 +10,18 @@ public class InvocationFinishedDataCollection implements InvocationFinishedListe
 
   public Data getMetricData(){
       Data invokeFinisedMetrics = new Data();
-      invokeFinisedMetrics.addIntData("Number_of_Methods_Ran", this.numMethodRuns);
+      invokeFinisedMetrics.addIntData("Number_of_Methods_Ran", getNumberOfMethodRuns());
     
       return invokeFinisedMetrics;
     }
 
     @Override
     public void invocationFinished(InvocationFinishedEvent invocationFinishedEvent){
-      numMethodRuns++;
+      updataNumberOfMethodRuns();
       System.out.println(invocationFinishedEvent.getMethodName() +" finished execution");
 
     }
+
+    protected void updataNumberOfMethodRuns(){this.numMethodRuns++;}
+    protected int getNumberOfMethodRuns(){return this.numMethodRuns;}
 }

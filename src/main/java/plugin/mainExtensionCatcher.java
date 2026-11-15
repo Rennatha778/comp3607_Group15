@@ -23,7 +23,6 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   private int numClassEvent = 0;
   private int numInvokeFinishedEvent = 0;
   private int numApplicationEvent = 0;
-  PackageEvent newPackageEvent;
 
   
   @Override 
@@ -126,27 +125,6 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   }
 
 
-
-  @Override 
-  public boolean isCompatible(){
-    return true;
-  }
-
-  @Override 
-  public String getVersion(){
-    return "1.0";
-  }
-
-  @Override 
-  public String getName(){
-    return "BlueJ Metrics Plugin";
-  } 
-
-  @Override
-  public String getDescription() {
-      return "A metric tracker plugin";
-   }
-
   protected long getTotalSessionTime(long sessionEndTime, long sessionStartTime){
     if(sessionEndTime != 0 && sessionStartTime != 0)
       return sessionEndTime - sessionStartTime;
@@ -169,4 +147,25 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
 
     return mainExtentionCaterMetrics;
   }
+
+
+  @Override 
+  public boolean isCompatible(){
+    return true;
+  }
+
+  @Override 
+  public String getVersion(){
+    return "1.0";
+  }
+
+  @Override 
+  public String getName(){
+    return "BlueJ Metrics Plugin";
+  } 
+
+  @Override
+  public String getDescription() {
+      return "A metric tracker plugin";
+   }
 }

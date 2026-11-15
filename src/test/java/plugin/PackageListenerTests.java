@@ -14,7 +14,7 @@ public class PackageListenerTests {
     
   
   @Test
-  void numProjectsOpened(){
+  void TestForNumberOfProjectsOpened(){
     testPackageListener.updateNumberOfPackagesOpened();
     testPackageListener.updateNumberOfPackagesOpened();
     testPackageListener.updateNumberOfPackagesOpened();

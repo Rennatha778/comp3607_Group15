@@ -100,13 +100,13 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
      numCompileSuccessful++;
   }
 
-  private synchronized void calculateTotalCompileTime(){
-    totalCompileTime = totalCompileTime + (compileEndTime - compileStartTime);
-  }
-
   @Override 
   public void compileWarning(CompileEvent event){
     System.out.println("Compile warning!");
+  }
+
+  private synchronized void calculateTotalCompileTime(){
+    totalCompileTime = totalCompileTime + (compileEndTime - compileStartTime);
   }
 
   public int getcompileSuccessRate(){
