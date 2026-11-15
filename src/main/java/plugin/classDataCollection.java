@@ -61,7 +61,6 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     if(this.classes != null && checkName(classEvent.getOldName(),classEvent)){
       modifiedClassesTreeMap.put(classEvent.getBClass().getName(),timeChange);
       System.out.println("Name changed successfully:");
-      //updateClasses(classEvent);
     }
 
   }

@@ -103,7 +103,7 @@ public class TableGenerator {
     return movingy;
   }
 
-  private int getLargestStringLenght(String[] strings){
+  protected int getLargestStringLenght(String[] strings){
     int largestStringLenght = 0;
     for(String string :strings){
       if(string.length() > largestStringLenght){
@@ -114,7 +114,7 @@ public class TableGenerator {
     return largestStringLenght;
   }
 
-  private void printSpacerBar(PDPageContentStream content1, int lagestStringLenght, Object[] colValues, String[] headings){
+  protected void printSpacerBar(PDPageContentStream content1, int lagestStringLenght, Object[] colValues, String[] headings){
     int barLenght = getSpacingBarLenght(colValues,headings);
     try{
       for(int i = 0; i < barLenght - (4 * headings.length); i ++){
@@ -126,7 +126,7 @@ public class TableGenerator {
 
   }
 
-  private int getSpacingBarLenght(Object[] colValues, String[] headings){
+  protected int getSpacingBarLenght(Object[] colValues, String[] headings){
     int spacingBarLenght = 0;
     for(int lenght : getColoumLenght(colValues, headings)){
       spacingBarLenght += lenght;
@@ -134,13 +134,18 @@ public class TableGenerator {
     return spacingBarLenght;
   }
 
-  private int[] getColoumLenght(Object[] coloumValues, String[] headings){
+  protected int[] getColoumLenght(Object[] coloumValues, String[] headings){
     int numColoums = coloumValues.length;
     int[] coloumLenghts = new int[numColoums];
     int i = 0;
     for(Object coloum : coloumValues){
       if(coloum instanceof String[]){
-        coloumLenghts[i] = getLargestStringLenght((String[])coloum) + 10;
+        if(getLargestStringLenght((String[])coloum) > headings[i].length()){
+          coloumLenghts[i] = getLargestStringLenght((String[])coloum) + 10;
+        }else{
+          coloumLenghts[i] = headings[i].length() + 10;
+        }
+        
       }else{
         coloumLenghts[i] = headings[i].length()+ 10;
       }

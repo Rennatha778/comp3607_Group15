@@ -40,6 +40,7 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
     classListner = new ClassDataCollection();
     packageListner = new PackageDataCollection();
     invokeListner = new InvocationFinishedDataCollection();
+  
     
     bluejInstance.addExtensionEventListener(this);
     bluejInstance.addCompileListener(compileListner);
