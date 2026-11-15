@@ -97,11 +97,12 @@ public  class mainExtensionCatcher extends Extension implements ExtensionEventLi
   }
 
   public void generateReport(TreeMap<String,Data> listenerMetricTreeMaps){
+    String filePath = "C:\\Users\\Owner\\Documents\\PluginFiles";
     ReportPublisher rp = new JSONFileGenerator();
     ReportPublisher jp = new PDFFileGenerator();
 
-    rp.generateReport(listenerMetricTreeMaps);
-    jp.generateReport(listenerMetricTreeMaps);
+    rp.generateReport(listenerMetricTreeMaps, filePath);
+    jp.generateReport(listenerMetricTreeMaps, filePath);
 
     System.out.println("Report generated");
 

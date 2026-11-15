@@ -51,7 +51,7 @@ public class PDFFileGenerator implements ReportPublisher {
   TreeMapTraverser treeMapTraverser;
 
 
-public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
+public PDDocument generateReport(TreeMap<String,Data> listenersMetricsTreeMap, String filePath){
 
   dataTreeMap = listenersMetricsTreeMap;
   treeMapTraverser = new TreeMapTraverser();
@@ -166,14 +166,16 @@ public void generateReport(TreeMap<String,Data> listenersMetricsTreeMap){
 
     pageContent1.close();
 
-    pdfDocument.save("C:\\Users\\Owner\\Documents\\PluginFiles\\PluginMetricsPDF.pdf");
+    pdfDocument.save(filePath+"\\PluginMetricsPDF.pdf");
 
     System.out.println("PDF created.");
+    return pdfDocument;
     }
     catch (Exception e) {
       e.printStackTrace();
       System.out.println("PDF file was not created");
     }
+    return null;
   }
   public Object[] getMetricValues(String[] metricNames){
       Object[] metricValues = new Object[metricNames.length];
