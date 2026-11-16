@@ -10,6 +10,12 @@ public class ByValueIterator implements DataIterator {
   private TreeMap valueTreeMap;
   private Iterator valueIterator;
 
+  /**
+   * Constructor determines the specific value type of the TreeMap.
+   * It then intialises the TreeMap (valueTreeMap) and the specific iterator (valueIterator).
+   * These will be used to iterate through the TreeMap's values.
+   * @param treeMapValue Adapter class storing specific TreeMap Type
+   */
   public ByValueIterator(AdapterInterface treeMapValue){
     if(treeMapValue instanceof DataAdapter){
       this.valueTreeMap = (TreeMap<String,Data>)treeMapValue.getMap();
@@ -30,6 +36,7 @@ public class ByValueIterator implements DataIterator {
   
     valueIterator = dataByValue.iterator();
   }
+
   public boolean hasNext(){
     return valueIterator.hasNext();
   }

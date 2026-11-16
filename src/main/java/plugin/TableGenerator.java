@@ -3,109 +3,109 @@ import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 
+/**
+ * Class used to generate a table on a pdf page
+ */
 public class TableGenerator {
- 
-
-  public int generateTableLong(String[] cn, Object[]ov, int rowNum, PDPageContentStream content1, int xValue, int yValue ) throws IOException{
-    String[] coloumNames  = cn;
-    Object[] colValues = ov;
-    //String[] colNames = (String[])ov[0];
-    int numCols = coloumNames.length; 
-    int x = xValue, y = yValue, movingy = 700, movingx = 50;
-
-    //int largetsStringLenght = getLargestStringLenght((String[])colValues[0]) + 10;
-    int largetsStringLenght = getLargestStringLenght((String[])colValues[0]);
+  /**
+   * The method generates a table on a pdf page using the parameters passed into the method
+   * @param columValues An object array of other specifc types of arrays storing column data
+   * @param content1 PDF content stream used for writing to the PDF
+   * @param xValue the x coordinate on the page where the top of the table will be drawn
+   * @param yValue the y coordinate on the page where the top of the table will be drawn
+   */
+  public int generateTable(String[] tableHeadings, Object[]columValues, int numberOfRows, PDPageContentStream content1, int xValue, int yValue ){
+    String[] coloumNames  = tableHeadings;
+    Object[] columnValues = columValues;
+    
+    int numberOfColumns = coloumNames.length; 
+    int pageXValue = xValue, pageYValue = yValue, tableMovingYValue = 700, tableMovingXValue = 50;
+    
+    /**
+     * Variable holds the number of characters of the longest string, if any string are present.
+     * This is used to calculate the spacing bar for the top and bottom of the table.
+     * As well as for the row under the headings
+     */
+    int largetsStringLenght = getLargestStringLenght((String[])columnValues[0]);
   
     try{
       int row, col, currentCol;
       content1.beginText();
-      content1.newLineAtOffset(x, y);
-      printSpacerBar(content1,largetsStringLenght,colValues, coloumNames);
+      content1.newLineAtOffset(pageXValue, pageYValue);
+      printSpacerBar(content1,largetsStringLenght,columnValues, coloumNames);
       content1.endText();
       content1.beginText();
-      y = y-10;
-      movingy = y;
-      content1.newLineAtOffset(x, y);
+      pageYValue = pageYValue-10;
+      tableMovingYValue = pageYValue;
+      content1.newLineAtOffset(pageXValue, pageYValue);
 
-    for(row = 0; row < rowNum + 2; row++){
+    for(row = 0; row < numberOfRows + 2; row++){
       currentCol = 0;
-      for(col = 0; col < numCols; col++ ){
+      for(col = 0; col < numberOfColumns; col++ ){
         if(row == 0){
-          //System.out.print(coloumNames[col]);
           content1.showText("|  "+coloumNames[col]);
         }
-        //System.out.println(col+" - "+currentCol);
+
         if(col == currentCol && row > 1){
-          //System.out.print("Yes");
-          if(colValues[currentCol] instanceof String[] ){
-            //System.out.print("Yes");
-            String[] curCol = (String[]) colValues[currentCol];
-            //System.out.print(curCol[row - 2]);
+          if(columnValues[currentCol] instanceof String[] ){
+            
+            String[] curCol = (String[]) columnValues[currentCol];
+    
             content1.showText("|  "+curCol[row - 2]);
           }else{
-            Object[] curCol = (Object[])colValues[currentCol];
+            Object[] curCol = (Object[])columnValues[currentCol];
             if(curCol[row-2] == null){
               content1.showText("|  N/A");
             }else{
               content1.showText("|  "+String.valueOf(curCol[row - 2]));
             }
           }
-          //System.out.print(colValues[row - 2]);
         }
 
         if(row == 1 && col == 0){
-          //System.out.print("-------");
-          /* for(int i= 0; i < largetsStringLenght; i++){
-            content1.showText("-");
-          } */
-         printSpacerBar(content1, largetsStringLenght,colValues,coloumNames);
+         printSpacerBar(content1, largetsStringLenght,columnValues,coloumNames);
         }
 
-        /* if(col + 1 == numCols && row != 1){
-          content1.showText(" |");
-        } */
-
-        //movingx += 180;
-        //movingx += (getColoumLenght(colValues)[col]* 6);
-        movingx += getColoumLenght(colValues, coloumNames)[col] * 6;
-        //content1.newLineAtOffset(movingx, movingy);
-        
+        tableMovingXValue += getColoumLenght(columnValues, coloumNames)[col] * 6;
         
         currentCol++;
         content1.endText();
         content1.beginText();
-      
-        //content1.newLineAtOffset(movingx + 15, movingy);
-        content1.newLineAtOffset(movingx, movingy);
+        content1.newLineAtOffset(tableMovingXValue, tableMovingYValue);
       
       }
+
       if(row != 1)
-        content1.showText(" |");
+      //content1.newLineAtOffset(tableMovingXValue + 30, tableMovingYValue);
+      content1.showText("  |");
       content1.endText();
       content1.beginText();
       
-      content1.newLineAtOffset(x, y - ((row + 1)* 15));
-      movingy = y - (row + 1)* 15;
-      movingx = x;
+      content1.newLineAtOffset(pageXValue, pageYValue - ((row + 1)* 15));
+      tableMovingYValue = pageYValue - (row + 1)* 15;
+      tableMovingXValue = pageXValue;
     }
 
     content1.endText();
     content1.beginText();
-    /* content1.newLineAtOffset(x, y - ((row + 1)* 15));
-    movingy = y - (row + 1)* 15; */
-    content1.newLineAtOffset(x, movingy - 10);
-    printSpacerBar(content1,largetsStringLenght,colValues, coloumNames);
+    
+    content1.newLineAtOffset(pageXValue, tableMovingYValue - 10);
+    printSpacerBar(content1,largetsStringLenght,columnValues, coloumNames);
     content1.endText();
+
     }catch(IOException e){
       System.out.println("Error in prinitng table");
     }
 
-    return movingy;
+    return tableMovingYValue;
   }
 
-  protected int getLargestStringLenght(String[] strings){
+  /**
+   * The method returns the most number of characters of all the strings in a string array
+   */
+  protected int getLargestStringLenght(String[] arrayOfStrings){
     int largestStringLenght = 0;
-    for(String string :strings){
+    for(String string :arrayOfStrings){
       if(string.length() > largestStringLenght){
         largestStringLenght = string.length();
       }
@@ -114,11 +114,15 @@ public class TableGenerator {
     return largestStringLenght;
   }
 
+  /**
+   * The method prints a serise of -es on a PDF page
+   */
   protected void printSpacerBar(PDPageContentStream content1, int lagestStringLenght, Object[] colValues, String[] headings){
+    //- (4 * headings.length)
     int barLenght = getSpacingBarLenght(colValues,headings);
     try{
-      for(int i = 0; i < barLenght - (4 * headings.length); i ++){
-        content1.showText("*");
+      for(int i = 0; i < barLenght; i ++){
+        content1.showText("-");
       }
     }catch(IOException e){
       System.out.println("Error Occured in printing spacer bar");
@@ -126,14 +130,21 @@ public class TableGenerator {
 
   }
 
-  protected int getSpacingBarLenght(Object[] colValues, String[] headings){
+  /**
+   * The method gets the spacing bar lenght by adding up the individual column lenghts 
+   */
+  protected int getSpacingBarLenght(Object[] columnValues, String[] tableHeadings){
     int spacingBarLenght = 0;
-    for(int lenght : getColoumLenght(colValues, headings)){
+    for(int lenght : getColoumLenght(columnValues, tableHeadings)){
       spacingBarLenght += lenght;
     }
     return spacingBarLenght;
   }
 
+  /**
+   * The method calculates each column's lenght by setting it as the largest number of characters if the column holds strings,
+   * or the column header lenght if it is greater than the largest string or the column header if the column contains numbers.
+   */
   protected int[] getColoumLenght(Object[] coloumValues, String[] headings){
     int numColoums = coloumValues.length;
     int[] coloumLenghts = new int[numColoums];
@@ -141,13 +152,13 @@ public class TableGenerator {
     for(Object coloum : coloumValues){
       if(coloum instanceof String[]){
         if(getLargestStringLenght((String[])coloum) > headings[i].length()){
-          coloumLenghts[i] = getLargestStringLenght((String[])coloum) + 10;
+          coloumLenghts[i] = getLargestStringLenght((String[])coloum) + 5;
         }else{
-          coloumLenghts[i] = headings[i].length() + 10;
+          coloumLenghts[i] = headings[i].length() + 5;
         }
         
       }else{
-        coloumLenghts[i] = headings[i].length()+ 10;
+        coloumLenghts[i] = headings[i].length() + 5;
       }
 
       i++;

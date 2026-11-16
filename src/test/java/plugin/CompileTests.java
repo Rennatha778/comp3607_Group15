@@ -6,12 +6,14 @@ import org.w3c.dom.events.Event;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+
 import bluej.extensions2.event.PackageEvent;
 import bluej.extensions2.event.ClassEvent.EventType;
 public class CompileTests {
   static CompileDataCollection testerCompileListener;
-  @BeforeAll
-  static void setup(){
+  @BeforeEach 
+  void setup(){
     testerCompileListener = new CompileDataCollection();
   }
 

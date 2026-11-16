@@ -1,25 +1,33 @@
 package plugin;
 
 import java.util.TreeMap;
-
+/**
+ * This class contains a getMetricValue method that traverses through a TreeMap to return a key's value in the map.
+ */
 public class TreeMapTraverser {
+  /**
+   * The method searches through a TreeMap which has a key of type String and a value of type Data.
+   * The method returns the value for the key entered by the user if found.
+   * If the key is not found, null is returned.
+   * The TreeMap is travered using the Iterator and Adapter design Patterns. 
+   */
   public Object getMetricValue(TreeMap<String,Data> listenersMetricsTreeMap, String metricName){
-    boolean found = false;
-    Object foundMetric = null;
-   DataContainer metricNames = new DataCollection(new DataAdapter(listenersMetricsTreeMap));
+    boolean metricValueFound = false;
+    Object foundMetricValue = null;
 
-   DataIterator nameIterator = metricNames.getDataIterator(0);
-   DataIterator dataIterator = metricNames.getDataIterator(1);
+    DataContainer metricNames = new DataCollection(new DataAdapter(listenersMetricsTreeMap));
 
-   while(nameIterator.hasNext() && !found){
-    String dataName = (String)nameIterator.next();
-    //System.out.println(dataName);
+    DataIterator nameIterator = metricNames.getDataIterator(0);
+    DataIterator dataIterator = metricNames.getDataIterator(1);
+
+   while(nameIterator.hasNext() && !metricValueFound){
+     String dataName = (String)nameIterator.next();
 
      Data data = (Data)dataIterator.next();
 
      if(dataName.equals(metricName)){
-          found = true;
-          foundMetric = (Object) data;
+          metricValueFound = true;
+          foundMetricValue = (Object) data;
       }
 
      DataContainer subMetricInt = new DataCollection(new IntAdapter(data.getIntTreeMap()));
@@ -31,27 +39,26 @@ public class TreeMapTraverser {
      DataIterator subDataIntIterator = subMetricInt.getDataIterator(1);
       
       
-     while(subNameIntIterator.hasNext()&& !found){
+     while(subNameIntIterator.hasNext()&& !metricValueFound){
        String intlable = (String)subNameIntIterator.next();
 
        int intdata = ((int)subDataIntIterator.next());
 
        if(intlable.equals(metricName)){
-          found = true;
-          foundMetric = intdata;
+          metricValueFound = true;
+          foundMetricValue = intdata;
         }
-    
      }
 
      DataIterator subNameLongIterator = subMetricLong.getDataIterator(0);
      DataIterator subDataLongIterator = subMetricLong.getDataIterator(1);
-     while(subNameLongIterator.hasNext() && !found){
+     while(subNameLongIterator.hasNext() && !metricValueFound){
        String longlable = (String)subNameLongIterator.next();
       
        long longdata = (long)subDataLongIterator.next();
        if(longlable.equals(metricName)){
-          found = true;
-          foundMetric = longdata;
+          metricValueFound = true;
+          foundMetricValue = longdata;
         }
       
      }
@@ -59,14 +66,13 @@ public class TreeMapTraverser {
      DataIterator subOuterOCNameIterator = objectionCreation.getDataIterator(0);
      DataIterator subOuterTreeMapIterator = objectionCreation.getDataIterator(1);
 
-     while(subOuterOCNameIterator.hasNext() && !found){
+     while(subOuterOCNameIterator.hasNext() && !metricValueFound){
       String treeName = (String)subOuterOCNameIterator.next();
-      //System.out.println("Outer OC Key:"+treeName);
 
       TreeMap<String, TreeMap<String,Long>> innerTreeMapCast = (TreeMap<String, TreeMap<String,Long>>) subOuterTreeMapIterator.next();
       if(treeName.equals(metricName)){
-          found = true;
-          foundMetric = (Object)innerTreeMapCast;
+          metricValueFound = true;
+          foundMetricValue = (Object)innerTreeMapCast;
       }
        
        DataContainer innerTreeMap = new DataCollection(new TreeAdapter(innerTreeMapCast));
@@ -75,20 +81,18 @@ public class TreeMapTraverser {
        DataIterator innerTreeMapTreeIterator = innerTreeMap.getDataIterator(1);
 
         
-       while(innerTreeMapNameIterator.hasNext() && !found){
+       while(innerTreeMapNameIterator.hasNext() && !metricValueFound){
          String Key = (String) innerTreeMapNameIterator.next();
-         //System.out.println(Key);
         
          long value = (long)innerTreeMapTreeIterator.next();
-         //System.out.println(String.valueOf(value));
          if(Key.equals(metricName)){
-          found = true;
-          foundMetric = value;
+          metricValueFound = true;
+          foundMetricValue = value;
         }
        }
      }
     
    }
-   return foundMetric;
+   return foundMetricValue;
   }
 }

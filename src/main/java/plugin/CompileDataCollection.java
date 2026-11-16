@@ -6,7 +6,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   int numCompileFailed = 0;
   int numCompileSuccessful = 0;
   int expectedErrors = 0;
-  int sysmbolError = 0;
+  int symbolError = 0;
   int unclosedError = 0;
   int returnError = 0;
   int otherError = 0;
@@ -27,7 +27,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
     compileMetrics.addIntData("Number_of_Compile_Failed", numCompileFailed);
     compileMetrics.addIntData("Number_of_Compile_Successful", numCompileSuccessful);
     compileMetrics.addIntData("Number_of_'Expected'_Errors",expectedErrors);
-    compileMetrics.addIntData("Number_of_'Symbol'_Errors",sysmbolError);
+    compileMetrics.addIntData("Number_of_'Symbol'_Errors",getSymbolErrorCount());
     compileMetrics.addIntData("Number_of_'Unclosed'_Errors",unclosedError);
     compileMetrics.addIntData("Number_of_'Return'_Errors",returnError);
     compileMetrics.addIntData("Number_of_Other_Errors",otherError);
@@ -138,7 +138,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   protected void incrementNumCompileSuccessful(){this.numCompileSuccessful++;}
   protected void incrementNumCompileFailed(){this.numCompileFailed++;}
   protected void incrementTotalExpectedErrorsCount(){this.expectedErrors++;}
-  protected void incrementTotalSymbolErrorsCount(){this.sysmbolError++;}
+  protected void incrementTotalSymbolErrorsCount(){this.symbolError++;}
   protected void incrementTotalUnclosedErrorsCount(){this.unclosedError++;}
   protected void incrementTotalReturnErrorsCount(){this.returnError++;}
   protected void incrementTotalOtherErrorsCount(){this.returnError++;}
@@ -151,7 +151,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   }
       
   protected void setErrorFixedStartTime(long errorFixedStartTime){
-    if(getErrorFixedEndTime() == (long)0){
+    if(getErrorFixedStartTime() == (long)0 && getErrorFixedEndTime() == (long)0 || errorFixedStartTime == 0){
       this.errorFixStartTime = errorFixedStartTime;
     }
   }
@@ -170,7 +170,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   protected int getTotalCompileSuccessful(){return this.numCompileSuccessful;}
   protected int getTotalCompileFail(){return this.numCompileFailed;}
   protected int getExpectedErrorCount(){return this.expectedErrors;}
-  protected int getSymbolErrorCount(){return this.sysmbolError;}
+  protected int getSymbolErrorCount(){return this.symbolError;}
   protected int getUnclodedErrorCount(){return this.unclosedError;}
   protected int getReturnErrorCount(){return this.returnError;}
   protected int getOtherErrorCount(){return this.otherError;}

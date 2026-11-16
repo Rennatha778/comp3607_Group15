@@ -76,13 +76,13 @@ public PDDocument generateReport(TreeMap<String,Data> listenersMetricsTreeMap, S
    
   Object[] combinedArray = {metricNames,metricValues};
   TableGenerator generateTable = new TableGenerator();
-  int newYValue = generateTable.generateTableLong(headings,combinedArray,metricNames.length,pageContent1,50,700);
+  int newYValue = generateTable.generateTable(headings,combinedArray,metricNames.length,pageContent1,50,700);
   
   String[] ratioHeadings = {"Metrics","Ratio"};
   String[] ratioMetricNames = {"Total_Idle_Time","Total_Active_Time"};
   Object[] ratioValues = {4,5};
   Object[] ratioColoumValues = {ratioMetricNames,ratioValues};
-  newYValue = generateTable.generateTableLong(ratioHeadings,ratioColoumValues,ratioMetricNames.length,pageContent1,50,newYValue-25);
+  newYValue = generateTable.generateTable(ratioHeadings,ratioColoumValues,ratioMetricNames.length,pageContent1,50,newYValue-25);
    pageContent1.close();
    
 

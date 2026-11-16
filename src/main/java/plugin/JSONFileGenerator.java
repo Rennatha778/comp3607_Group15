@@ -1,7 +1,9 @@
 package plugin;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
+import java.io.IOException;
 import java.util.TreeMap;
 
 
@@ -24,11 +26,14 @@ public class JSONFileGenerator implements ReportPublisher {
       System.out.println("JSON file created.");
       
       return file;
-    }catch(Exception e) {
+    }catch(JsonProcessingException e) {
       e.printStackTrace();
-      System.out.println("Failed to create JSON file.");
-      return null;
+      System.out.println("Failed to create JSON file - Processing Errors");
+    }catch(IOException e){
+      e.printStackTrace();
+      System.out.println("Failed to create JSON file - File Writing Errors");
     }
+    return null;
   }
 
   protected TreeMap<String,Data> compileTreeMaps(TreeMap<String,Data> listenerMetricsTreeMaps){

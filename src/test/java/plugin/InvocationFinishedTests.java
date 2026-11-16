@@ -14,8 +14,8 @@ public class InvocationFinishedTests {
 
   @Test
   void TestForNumberOfMethodsRan(){
-    testerInvocationFinished.updataNumberOfMethodRuns();
-    testerInvocationFinished.updataNumberOfMethodRuns();
+    testerInvocationFinished.incrmentNumberOfMethodRuns();
+    testerInvocationFinished.incrmentNumberOfMethodRuns();
     assertEquals(2,testerInvocationFinished.getNumberOfMethodRuns());
   }
 }

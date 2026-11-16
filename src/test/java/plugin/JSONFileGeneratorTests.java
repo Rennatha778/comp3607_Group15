@@ -97,11 +97,27 @@ public class JSONFileGeneratorTests {
     assertNotNull(jsonFile);
   }
 
+
   @Test
   void TestThatJSONFileNotCreated(){
     String filePath ="";
     jsonFile = (File)testerJsonFileGenerator.generateReport(testerDataTreeMap,filePath);
     assertNull(jsonFile);
+  }
+
+  @Test
+  void TestThatJSONFileNotEmpty(){
+    String filePath = "C:\\Users\\Owner\\OneDrive\\Documents\\COMP 1601 Programs\\OOP II\\bluejplugin";
+    jsonFile = (File)testerJsonFileGenerator.generateReport(testerDataTreeMap,filePath);
+     ObjectMapper testerobjectMapper = new ObjectMapper();
+
+    try{
+       newMapWithJSONData = testerobjectMapper.readValue(jsonFile,new TypeReference<TreeMap<String,Data>>(){});
+    }catch(IOException e){
+      e.printStackTrace();
+      System.out.println("Unable to read from JSON file");
+    }
+    assertFalse(newMapWithJSONData.isEmpty());
   }
 
   @Test

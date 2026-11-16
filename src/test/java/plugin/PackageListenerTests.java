@@ -15,9 +15,9 @@ public class PackageListenerTests {
   
   @Test
   void TestForNumberOfProjectsOpened(){
-    testPackageListener.updateNumberOfPackagesOpened();
-    testPackageListener.updateNumberOfPackagesOpened();
-    testPackageListener.updateNumberOfPackagesOpened();
+    testPackageListener.incrementNumberOfPackagesOpened();
+    testPackageListener.incrementNumberOfPackagesOpened();
+    testPackageListener.incrementNumberOfPackagesOpened();
     assertEquals(3,testPackageListener.getNumberOfPackagesOpened());
   }
   

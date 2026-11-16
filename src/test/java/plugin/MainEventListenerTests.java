@@ -3,12 +3,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 
-public class MainExtensionCatcherTests {
-  static mainExtensionCatcher testerMainCatcher;
+public class MainEventListenerTests {
+  static MainEventDataCollection testerMainCatcher;
   
   @BeforeAll
   static void setup(){
-    testerMainCatcher = new mainExtensionCatcher();
+    testerMainCatcher = new MainEventDataCollection();
   }
 
   @Test
