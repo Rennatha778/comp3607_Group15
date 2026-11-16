@@ -118,7 +118,7 @@ public class TableGenerator {
     int barLenght = getSpacingBarLenght(colValues,headings);
     try{
       for(int i = 0; i < barLenght - (4 * headings.length); i ++){
-        content1.showText("-");
+        content1.showText("*");
       }
     }catch(IOException e){
       System.out.println("Error Occured in printing spacer bar");
