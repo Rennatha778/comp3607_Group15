@@ -51,8 +51,8 @@ public class JSONFileGenerator implements ReportGenerationStrategy {
     this.listenerMetricsTreeMap = listenerMetricsTreeMaps;
     Data studentData = new Data();
 
-    studentData.addIntData("Ethan Mohan",8160);
-    studentData.addIntData("Mikayla Roberts",8160);
+    studentData.addIntData("Ethan Mohan",816044592);
+    studentData.addIntData("Mikayla Roberts",816044112);
     studentData.addIntData("Rennatha Thomas",816044740);
     
     this.listenerMetricsTreeMap.put("Student Information",studentData);
