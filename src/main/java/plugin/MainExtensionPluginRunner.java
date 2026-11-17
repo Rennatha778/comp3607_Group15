@@ -92,11 +92,14 @@ public class MainExtensionPluginRunner extends Extension {
    */
   public void generateReports(TreeMap<String,Data> listenerMetricTreeMaps){
     String filePath = "C:\\Users\\Owner\\Documents\\PluginFiles";
-    ReportStrategy jsonReport = new JSONFileGenerator();
-    ReportStrategy pdfReport = new PDFFileGenerator();
+    ReportGenerationContext jsonContext = new ReportGenerationContext();
+    ReportGenerationContext pdfContext = new ReportGenerationContext();
 
-    jsonReport.generateReport(listenerMetricTreeMaps, filePath);
-    pdfReport.generateReport(listenerMetricTreeMaps, filePath);
+    jsonContext.setFileGenerationStrategy(new JSONFileGenerator());
+    pdfContext.setFileGenerationStrategy(new PDFFileGenerator());
+
+    jsonContext.createReport(listenerMetricTreeMaps,filePath);
+    pdfContext.createReport(listenerMetricTreeMaps,filePath);
 
     System.out.println("Report generated");
 

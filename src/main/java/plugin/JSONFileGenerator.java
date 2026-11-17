@@ -9,7 +9,7 @@ import java.util.TreeMap;
 /**
  * This class contains a method that generates a json file
  */
-public class JSONFileGenerator implements ReportStrategy {
+public class JSONFileGenerator implements ReportGenerationStrategy {
   TreeMap<String,Data> listenerMetricsTreeMap;
   TreeMap<String,Integer> studentInfo;
 
