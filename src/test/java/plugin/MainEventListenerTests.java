@@ -15,6 +15,15 @@ public class MainEventListenerTests {
   void TestForTotalSessionTime(){
     long startTime = (long) 4;
     long endTime = (long) 10;
-    assertEquals(endTime-startTime, testerMainCatcher.getTotalSessionTime(endTime,startTime));
+    assertEquals(endTime-startTime, testerMainCatcher.calculateTotalSessionTime(startTime,endTime));
   }
+
+  @Test
+  void TestForTotalSessionTimeInvalidNumbers(){
+    long startTime = (long) 0;
+    long endTime = (long) 10;
+    assertEquals(0, testerMainCatcher.calculateTotalSessionTime(startTime,endTime));
+  }
+
+ 
 }

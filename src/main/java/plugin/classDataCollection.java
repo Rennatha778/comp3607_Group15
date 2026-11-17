@@ -11,11 +11,12 @@ import bluej.extensions2.event.ClassListener;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
-
+/**
+ * This class collects BlueJ class event metrics
+ */
 
 public class ClassDataCollection implements ClassListener, BluejListeners{
   int numStatechanges = 0;
-  int numClassesRemoved = 0;
   int prevTypedCount = 0;
   int currTypedCount = 0;
 
@@ -23,15 +24,12 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   long idleTypeTime = 0;
   long prevTypedTime = 0;
   long currTypedTime = 0;
-
+  /**
+   * Variable used to store the open editior of a class
+   */
   JavaEditor currClassEditor;
-  BClass currBClass;
 
-  BPackage currPackage = null;
-  BClass[] classes = null;
-  BMethod[] classMethods;
-  int classesSize;
-  ArrayList<BClass> bClasses = new ArrayList<BClass>();
+  
 
   TreeMap<String,Long>removedClassesTreeMap = new TreeMap<String,Long>();
   TreeMap<String,Long>createdClassesTreeMap = new TreeMap<String,Long>();
@@ -39,12 +37,12 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   TreeMap<String,Long>createdMethodsTreeMap = new TreeMap<String,Long>();
     
   /**
-   * 
+   * @return a populated Data class
    */
   public Data getMetricData(){
    Data classMetrics = new Data();
-    classMetrics.addIntData("Number_of_State_Changes",numStatechanges);
-    classMetrics.addIntData("Number_of_Classes_Removed",numClassesRemoved);
+    classMetrics.addIntData("Number_of_Class_State_Changes",numStatechanges);
+    classMetrics.addIntData("Number_of_Classes_Removed",removedClassesTreeMap.size());
     classMetrics.addLongData("Total_Active_Typing_Time", activeTypeTime);
     classMetrics.addLongData("Total_Idle_Typing_Time", idleTypeTime);
     classMetrics.addObjectCreationData("Created_Classes",createdClassesTreeMap);
@@ -54,75 +52,90 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
      return classMetrics;
   }
 
+  /**
+   * This method is used to output class name changes made to the BlueJ debugger log
+   */
   @Override
   public void classNameChanged(ClassEvent classEvent){
-    long timeChange = System.currentTimeMillis();
+    //long timeChange = System.currentTimeMillis();
     System.out.println("Class name changed from: "+ classEvent.getOldName());
     System.out.println("Class name changed to: "+ classEvent.getClass().getName());  
 
-    if(!getBClassArrayList().isEmpty() && checkName(classEvent.getOldName())){
-      modifiedClassesTreeMap.put(classEvent.getBClass().getName(),timeChange);
-      bClasses.remove(classEvent.getBClass());
-      bClasses.add(classEvent.getBClass());
-      System.out.println("Name changed successfully:");
-    }
-
+    System.out.println("Name changed successfully:");
   }
 
+  /**
+   * This method is used to track deleted classes.
+   * Their names are stored in a TreeMap, along with the 
+   * currMills time they were removed
+   */
   @Override 
   public void classRemoved(ClassEvent classEvent){
-    Long timeRemoved = System.currentTimeMillis();
-
-    if(!getBClassArrayList().isEmpty() && getBClassArrayList().contains(classEvent.getBClass()) && !removedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
-      removedClassesTreeMap.put(classEvent.getBClass().getName(),timeRemoved);
-      numClassesRemoved++;
-      //updateClasses(classEvent);
-      getBClassArrayList().remove(classEvent.getBClass());
-    }
-      
-    System.out.println(classEvent.getBClass().getName() + " was removed.");
+     Long timeRemoved = System.currentTimeMillis();
+    removedClassesTreeMap.put(classEvent.getBClass().getName(),timeRemoved);
   }
 
-  private synchronized void classCreated(Long time, ClassEvent classEvent){
-      if(!getBClassArrayList().isEmpty() && !getBClassArrayList().contains(classEvent.getBClass()) && !createdClassesTreeMap.containsKey(classEvent.getBClass().getName())){
-        createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
-        System.out.println("Created class:"+classEvent.getBClass().getName());
-        getBClassArrayList().add(classEvent.getBClass());
+  /**
+   * This method tracks the creation of new classes within a BlueJ session.
+   * Their names are stored in a TreeMap, along with the 
+   * currMills time they were created
+   * @return True/false depending on if the current class is determined to be a new class
+   */
+  private synchronized boolean classCreated(Long time, ClassEvent classEvent){
+     ArrayList<BClass> bClassesList = new ArrayList<BClass>();
+     try{
+      for(BClass bClass : classEvent.getPackage().getClasses()){
+        bClassesList.add(bClass);
       }
+      if(!bClassesList.contains(classEvent.getBClass())){
+          createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
+          return true;
+        }
+     }catch(PackageNotFoundException e){
+      e.printStackTrace();
+     }catch(ProjectNotOpenException e){
+      e.printStackTrace();
+     }
+     return false;
+     }
    
-  }
 
+  /**
+   * This method tracks all the classes that were modified during 
+   * the BlueJ session. Their names are stored in a TreeMap along with
+   * the time modified.
+   */
   private synchronized void classModified(Long time, ClassEvent classEvent){
-      if(!getBClassArrayList().isEmpty()){
-        modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
-        System.out.println("Modified class:"+classEvent.getBClass().getName());
-      }
-
+    modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
+    System.out.println("Modified class:"+classEvent.getBClass().getName());
   }
 
+ 
+  /**
+   * This method is called whenever a class related event happens.
+   * It calls the classCreated, classModified and trackTypeTime methods.
+   * It also updated the number of state changes count. 
+   */
   @Override 
   public synchronized void classStateChanged(ClassEvent classEvent){
     currTypedTime = System.currentTimeMillis();
-    //try{
-      /* for(BClass bClass :classEvent.getPackage().getClasses()){
-        bClasses.add(bClass);
-      } */
-      initializeBClassArrayList(classEvent);
-      classCreated(currTypedTime,classEvent);
-      classModified(currTypedTime,classEvent);
+      if(!classCreated(currTypedTime,classEvent)){
+        classModified(currTypedTime,classEvent);
+      }
       trackTypeTime(classEvent);
-    /* }catch(ProjectNotOpenException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    }catch(PackageNotFoundException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    } */
-    
+      
+      System.out.println("Class changes event ");
       
     numStatechanges++;
-    System.out.println(classEvent.getClass().getName() + " was changed.");
-
   }
 
+
+  /**
+   * This method is used to determine active and idle typing time when
+   * a class editor is opened. A gap between two events greater than 45 seconds 
+   * is counted as idle typing time. Gaps that are less than 45 seconds are
+   * counted as active typing time.
+   */
   private void trackTypeTime(ClassEvent classEvent){
     try{
       if(classEvent.getBClass().getJavaEditorIfOpen() != null){
@@ -148,28 +161,4 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     }
       
   }
-
-  protected synchronized boolean checkName(String name){
-    for(BClass bClass : classes){
-      if(name.equals(bClass.getName())){
-         return true;
-      }
-    }
-    return false;
-  }
-
-  protected void setBClassArrayList(ArrayList<BClass>bClass){this.bClasses = bClass;}
-  protected void initializeBClassArrayList(ClassEvent classEvent){
-    try{
-      for(BClass bClass :classEvent.getPackage().getClasses()){
-        this.bClasses.add(bClass);
-      }
-    }catch(ProjectNotOpenException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    }catch(PackageNotFoundException e){
-      System.err.println("PACKAGE NOT OPENED!");
-    }
-  }
-
-  protected ArrayList<BClass> getBClassArrayList(){return this.bClasses;}
 }

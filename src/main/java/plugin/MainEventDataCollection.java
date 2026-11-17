@@ -2,6 +2,10 @@ package plugin;
 
 import bluej.extensions2.event.*;
 
+/**
+ * This class listens for BlueJ events.
+ * It collects general event metric and session time metrics
+ */
 public class MainEventDataCollection implements  ExtensionEventListener, BluejListeners {
   private long sessionStartTime;
   private long sessionEndTime;
@@ -16,6 +20,9 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
   private int numInvokeFinishedEvent = 0;
   private int numApplicationEvent = 0;
   
+  /**
+   * This method is called automatically everytime a event occurs in BlueJ
+   */
   @Override
   public synchronized void eventOccurred(ExtensionEvent event){
     currEventTime = System.currentTimeMillis();
@@ -24,13 +31,24 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
     updateEventCount(event);
   }
 
+  /**
+   * This method calculates the time elapsed between events and 
+   * determines if it was idle time or active time.
+   * Idle time is elapsed time greater than 1 minute (60 seconds), 
+   * Active time is elapsed time less than 1 minute (60 seconds).
+   * A running total for idle time is also done in this method.
+   */
   private synchronized void trackGap(){
-    if((currEventTime - prevEventTime) > 60000){ // if gap between events is more than 1 minute (60 seconds), it is counted as idle time
+    if((currEventTime - prevEventTime) > 60000){ 
       totalIdleTime = totalIdleTime + (currEventTime - prevEventTime);
     }
     prevEventTime = currEventTime;
   }
 
+  /**
+   * This method determines what time of event occured and updates
+   * its respective event count. 
+   */
   private void updateEventCount(ExtensionEvent event){
     if(event instanceof ApplicationEvent){
       numApplicationEvent++;
@@ -45,7 +63,28 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
     }
   }
 
-  protected void getTotalSessionTime(long totalSessionTime){this.totalSessionTime = totalSessionTime;}
+  /**
+   * This method is called when BlueJ is terminated.
+   * It receives session start and end times from the main runner.
+   * It also calls the method to calculate total session time.
+   */
+  protected void getSessionTimes(long sessionStartTime, long sessionEndTime){
+    this.sessionStartTime = sessionStartTime;
+    this.sessionEndTime = sessionEndTime;
+    this.totalSessionTime = calculateTotalSessionTime(this.sessionStartTime,this.sessionEndTime);
+  }
+
+  /**
+   * This method calculates total session time elapsed based off of 
+   * recorded app start and end times.
+   * @param sessionStartTime System currMil when BlueJ started
+   * @param sessionEndTime System currMills when BlueJ terminated 
+   */
+  protected long calculateTotalSessionTime(long sessionStartTime, long sessionEndTime){
+    if(sessionEndTime != 0 && sessionStartTime != 0)
+      return sessionEndTime - sessionStartTime;
+    return (long) 0;
+  }
 
   public Data getMetricData(){
     Data mainExtentionCaterMetrics = new Data();

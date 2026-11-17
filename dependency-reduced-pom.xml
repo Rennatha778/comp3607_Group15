@@ -21,7 +21,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>plugin.mainExtensionCatcher</mainClass>
+              <mainClass>plugin.MainExtensionPluginRunner</mainClass>
             </manifest>
           </archive>
         </configuration>
