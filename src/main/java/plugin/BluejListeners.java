@@ -1,12 +1,15 @@
 package plugin;
 
 /**
- * An interface implemented by BlueJ Listeners.
- * Its role is to causes each of its subclasses to return a Data class which stores metric data pertaining to the BlueJ event that it listens for.
+ * An interface implemented by all plugin BlueJ Listeners.
+ * Its role is to causes each subclasses to return a Data 
+ * class which stores the metric data pertaining to the specific event 
+ * that it listens for.
  */
 public interface BluejListeners {
   /**
-   * The method is used to populate a Data class with listener specific metrics from BlueJ events.
+   * The method is used to populate a Data class with listener 
+   * specific metrics from a BlueJ session.
    * @return a populated Data class
    */
   public Data getMetricData();

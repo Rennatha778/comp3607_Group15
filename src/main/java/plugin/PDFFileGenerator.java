@@ -35,15 +35,16 @@ public class PDFFileGenerator implements ReportPublisher {
   float movingYLocation;
 
   /**
-   * This method creates a PDF file using specific data retrieved from 
-   * a TreeMap. The report contains two pages. Page one has two tables. 
-   * One showing key metrics and the other shoeing active to idle time ratio.
-   * The second page has three charts. The first is a pie chart showing active 
-   * and idle typing times, the second a bar graph show the frequency of error
-   * types, and the third is a gantt chart showing lifespan of classes 
-   * that were created during the session. 
+   * This method creates a PDF file using specific data from a TreeMap sent 
+   * from the main runner. The report contains two pages. Page one has two 
+   * tables. One showing key metrics and the other showing active to idle 
+   * time ratio. The second page has three charts. The first is a pie chart 
+   * showing active and idle typing times, the second a bar graph show the 
+   * frequency of error types, and the third is a gantt chart showing lifespan 
+   * of classes that were created during the session. 
    * @param listenersMetricsTreeMap TreeMap containing all event listeners' data TreeMaps
    * @param filePath String variable containing the location where the file is to be stored
+   * @return A pdf file 
    */
   public PDDocument generateReport(TreeMap<String,Data> listenersMetricsTreeMap, String filePath){
     dataTreeMap = listenersMetricsTreeMap;
@@ -72,7 +73,6 @@ public class PDFFileGenerator implements ReportPublisher {
       
       movingYLocation = createClassLifeSpanGanttChart(pdfDocument,page2,pageContent2,movingYLocation);
 
-
       pageContent2.close();
 
       System.out.println("Charts created.");
@@ -91,8 +91,8 @@ public class PDFFileGenerator implements ReportPublisher {
 
   /**
    * This method traverses the TreeMap and stores all the values for
-   * the keys passed in a string array. If the metric key is not found,
-   * a null value is put in its place.
+   * the keys passed in a string array in an object array. If the metric 
+   * key is not found, a null value is put in its place.
    * @param metricNames String array of all metric keys to be found
    * @return An object array of metric values for each metric name provide or null if not found
    */
@@ -112,8 +112,8 @@ public class PDFFileGenerator implements ReportPublisher {
   }
 
   /**
-   * This method creates and prints the key metrics table unto the pdf document.
-   * @return the y value at which the next item on the pdf should be placed
+   * This method creates and prints the key metrics table on the pdf document.
+   * @return the y value at which the next item on the pdf can be placed
    */
   protected int createKeyMetricsTable(PDPageContentStream pageContent1){
     try{
@@ -137,13 +137,13 @@ public class PDFFileGenerator implements ReportPublisher {
   }
 
   /**
-   * This method calculates and prints the Active to Idle ratios unto the pdf document 
+   * This method calculates and prints the Active to Idle ratios on the pdf document 
    */
   protected void createActiveToIdleTimeRatioTable(int newYValue, PDPageContentStream pageContent1){
     try{
       pageContent1.setFont(new PDType1Font(Standard14Fonts.FontName.COURIER),12);
       pageContent1.beginText();
-      pageContent1.newLineAtOffset(50,newYValue - 20);
+      pageContent1.newLineAtOffset(50,newYValue - 45);
       pageContent1.showText("Table showing Active to Idle Ratio ");
       pageContent1.endText();
 
@@ -151,14 +151,15 @@ public class PDFFileGenerator implements ReportPublisher {
       String[] ratioMetricNames = {"Total_Idle_Time","Total_Active_Time"};
       Object[] ratioValues = {4,5};
       Object[] ratioColoumValues = {ratioMetricNames,ratioValues};
-      newYValue = tableGenerator.generateTable(ratioHeadings,ratioColoumValues,ratioMetricNames.length,pageContent1,50,newYValue-45);
+      newYValue = tableGenerator.generateTable(ratioHeadings,ratioColoumValues,ratioMetricNames.length,pageContent1,50,newYValue-55);
     }catch(IOException e){
       e.printStackTrace();
     }
   }
 
   /**
-   * This method creates and draws a pie chart showing Active to Idle typing time unto the pdf
+   * This method creates and draws a pie chart showing Active to Idle typing 
+   * time on the pdf.
    * @return the y value at which the next item on the pdf should be placed
    */
   protected float createActiveToIdleTypingPieChart(PDDocument pdfDocument, PDPage page2, PDPageContentStream pageContent2){
@@ -186,7 +187,8 @@ public class PDFFileGenerator implements ReportPublisher {
   }
 
   /**
-   * This method creates and draws a bar chart showing the frequency of certain types of compile error unto the pdf document
+   * This method creates and draws a bar chart showing the frequency of certain 
+   * types of compile error on the pdf document.
    * @return the y value at which the next item on the pdf should be placed
    */
   protected float createErrorFrequencyBarChart(PDDocument pdfDocument, PDPage page2, PDPageContentStream pageContent2, float pieChartYLocation){
@@ -215,7 +217,8 @@ public class PDFFileGenerator implements ReportPublisher {
   }
 
   /**
-   * This method creates and draws a gantt chart show the lifespan of created classes during the session time unto the pdf
+   * This method creates and draws a gantt chart showing the lifespan of created 
+   * classes during the session time on the pdf.
    * @return the y value at which the next item on the pdf should be placed
    */
   protected float createClassLifeSpanGanttChart(PDDocument pdfDocument, PDPage page2, PDPageContentStream pageContent2, float barChartYLocation){
@@ -245,7 +248,7 @@ public class PDFFileGenerator implements ReportPublisher {
       float ganttChartYLocation = barChartYLocation - 250;
       pageContent2.drawImage(objectCreationGantChart,30, ganttChartYLocation,300, 225);
     
-    return ganttChartYLocation;
+      return ganttChartYLocation;
 
     }catch(IOException e){
       e.printStackTrace();

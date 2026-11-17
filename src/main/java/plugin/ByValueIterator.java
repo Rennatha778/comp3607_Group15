@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * This DataITerator subclass provides the functionality to traverse through
+ * a TreeMap by value (either a Integer, Long or TreeMap<String,Long>).
+ */
 public class ByValueIterator implements DataIterator {
   private List dataByValue;
   private TreeMap valueTreeMap;
@@ -37,10 +41,18 @@ public class ByValueIterator implements DataIterator {
     valueIterator = dataByValue.iterator();
   }
 
+  /**
+   * The method determines if there is another value entry in the TreeMap
+   * @return True/false depending on if there is another value entry in the TreeMap
+   */
   public boolean hasNext(){
     return valueIterator.hasNext();
   }
 
+  /**
+   * The method gets the next value entry in the TreeMap
+   * @return The next value entry in the TreeMap
+   */
   public Object next(){
     return valueIterator.next();
   }

@@ -2,7 +2,7 @@ package plugin;
 import java.util.TreeMap;
 
 /**
- * Interface used in implementing Adapter design pattern.
+ * Interface used in representing the Adapter design pattern.
  * Implementing subclasses store a specific TreeMap type and returns the data in a generic TreeMap type.
  */
 public interface AdapterInterface {

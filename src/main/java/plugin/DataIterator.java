@@ -1,7 +1,9 @@
 package plugin;
 
 /**
- * This interface is used to implements the Iterator design pattern by defining specific iterator behaviour
+ * This interface is used to implement the Iterator 
+ * design pattern. It defines specific iterator behaviour for all implementing
+ * classes.
  */
 public interface DataIterator {
     /**

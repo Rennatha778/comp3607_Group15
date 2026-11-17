@@ -2,7 +2,8 @@ package plugin;
 import java.util.TreeMap;
 
 /**
- * This class is used to store and retrieve event listener metric data stored in TreeMaps
+ * This class is used to store and retrieve listener specific
+ * event metric data which are stored in TreeMaps.
  */
 public class Data{
   TreeMap<String,Long> longDataTreeMap;
@@ -10,7 +11,7 @@ public class Data{
   TreeMap<String,TreeMap<String,Long>>objectCreationTreeMap;
 
   /**
-   * This constructor intantiates TreeMaps
+   * This constructor initialises the TreeMaps
    */
   public Data(){
     longDataTreeMap = new TreeMap<String,Long>();
@@ -19,21 +20,21 @@ public class Data{
   }
 
   /**
-   * This Method add metric of type Long and its name of type String 
+   * This method add a metric value of type Long and its name of type String 
    */
   public void addLongData(String metricName, Long metricLongValue){
     longDataTreeMap.put(metricName,metricLongValue);
   }
 
   /**
-   * This Method add metric of type Integer and its name of type String 
+   * This method add a metric value of type Integer and its name of type String
    */
   public void addIntData(String metricName, Integer metricIntValue){
     intDataTreeMap.put(metricName,metricIntValue);
   }
 
   /**
-   * This Method add metric of type TreeMap<String,Long> and its name of type String 
+   * This method add a metric value of type TreeMap<String,Long> and its name of type String
    */
   public void addObjectCreationData(String metricName, TreeMap<String,Long> metricTreeMapValue){
     objectCreationTreeMap.put(metricName,metricTreeMapValue);

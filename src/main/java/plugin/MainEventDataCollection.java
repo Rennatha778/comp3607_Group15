@@ -3,8 +3,7 @@ package plugin;
 import bluej.extensions2.event.*;
 
 /**
- * This class listens for BlueJ events.
- * It collects general event metric and session time metrics
+ * This class listens for BlueJ events and collects general event metrics and session time metrics
  */
 public class MainEventDataCollection implements  ExtensionEventListener, BluejListeners {
   private long sessionStartTime;
@@ -21,22 +20,25 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
   private int numApplicationEvent = 0;
   
   /**
-   * This method is called automatically everytime a event occurs in BlueJ
+   * This method is called when a event occurs in BlueJ. It makes a call to
+   * a the trackGap and updateEventCount methods. It also prints out the name of
+   * the event that occurred (eg. Application Event).
+   * @param event a BlueJ event 
    */
   @Override
   public synchronized void eventOccurred(ExtensionEvent event){
     currEventTime = System.currentTimeMillis();
-    System.out.println("Event occurred:"+event.getClass().getSimpleName());
     trackGap();
     updateEventCount(event);
+    System.out.println("Event occurred:"+event.getClass().getSimpleName());
   }
 
   /**
-   * This method calculates the time elapsed between events and 
-   * determines if it was idle time or active time.
+   * This method calculates the time elapsed between two events and 
+   * determines if it was idle or active time.
    * Idle time is elapsed time greater than 1 minute (60 seconds), 
    * Active time is elapsed time less than 1 minute (60 seconds).
-   * A running total for idle time is also done in this method.
+   * A running total for idle time is also kept in this method.
    */
   private synchronized void trackGap(){
     if((currEventTime - prevEventTime) > 60000){ 
@@ -46,8 +48,9 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
   }
 
   /**
-   * This method determines what time of event occured and updates
+   * This method determines what type of event occured and updates
    * its respective event count. 
+   * @param event a BlueJ event 
    */
   private void updateEventCount(ExtensionEvent event){
     if(event instanceof ApplicationEvent){

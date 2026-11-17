@@ -5,7 +5,7 @@ import bluej.extensions2.event.InvocationFinishedListener;
 
 
 /**
- * This class collects BlueJ invocation finised event metrics
+ * This class listens for and collects BlueJ invocation finised event metrics
  */
 public class InvocationFinishedDataCollection implements InvocationFinishedListener, BluejListeners{
   int numMethodRuns = 0;
@@ -18,7 +18,8 @@ public class InvocationFinishedDataCollection implements InvocationFinishedListe
     }
 
     /**
-     * Thid method is called whenever a method has finised running 
+     * Thid method is called when a method has finised running.
+     * It also calls a function to increment the numMethodRuns counter.
      */
     @Override
     public void invocationFinished(InvocationFinishedEvent invocationFinishedEvent){

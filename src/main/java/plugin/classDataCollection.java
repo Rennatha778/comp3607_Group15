@@ -1,8 +1,6 @@
 package plugin;
 
 import bluej.extensions2.BClass;
-import bluej.extensions2.BMethod;
-import bluej.extensions2.BPackage;
 import bluej.extensions2.PackageNotFoundException;
 import bluej.extensions2.ProjectNotOpenException;
 import bluej.extensions2.editor.JavaEditor;
@@ -12,9 +10,8 @@ import java.util.TreeMap;
 import java.util.ArrayList;
 
 /**
- * This class collects BlueJ class event metrics
+ * This class listens for and collects BlueJ class event metrics
  */
-
 public class ClassDataCollection implements ClassListener, BluejListeners{
   int numStatechanges = 0;
   int prevTypedCount = 0;
@@ -53,21 +50,19 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   }
 
   /**
-   * This method is used to output class name changes made to the BlueJ debugger log
+   * This method is used to output the change in class name to the BlueJ debugger log
    */
   @Override
   public void classNameChanged(ClassEvent classEvent){
-    //long timeChange = System.currentTimeMillis();
     System.out.println("Class name changed from: "+ classEvent.getOldName());
     System.out.println("Class name changed to: "+ classEvent.getClass().getName());  
-
     System.out.println("Name changed successfully:");
   }
 
   /**
    * This method is used to track deleted classes.
    * Their names are stored in a TreeMap, along with the 
-   * currMills time they were removed
+   * system time they were removed
    */
   @Override 
   public void classRemoved(ClassEvent classEvent){
@@ -78,17 +73,17 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   /**
    * This method tracks the creation of new classes within a BlueJ session.
    * Their names are stored in a TreeMap, along with the 
-   * currMills time they were created
+   * system time they were created
    * @return True/false depending on if the current class is determined to be a new class
    */
-  private synchronized boolean classCreated(Long time, ClassEvent classEvent){
+  private synchronized boolean classCreated(Long creationTime, ClassEvent classEvent){
      ArrayList<BClass> bClassesList = new ArrayList<BClass>();
      try{
       for(BClass bClass : classEvent.getPackage().getClasses()){
         bClassesList.add(bClass);
       }
       if(!bClassesList.contains(classEvent.getBClass())){
-          createdClassesTreeMap.put(classEvent.getBClass().getName(),time);
+          createdClassesTreeMap.put(classEvent.getBClass().getName(),creationTime);
           return true;
         }
      }catch(PackageNotFoundException e){
@@ -105,16 +100,17 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * the BlueJ session. Their names are stored in a TreeMap along with
    * the time modified.
    */
-  private synchronized void classModified(Long time, ClassEvent classEvent){
-    modifiedClassesTreeMap.put(classEvent.getBClass().getName(),time);
+  private synchronized void classModified(Long timeModified, ClassEvent classEvent){
+    modifiedClassesTreeMap.put(classEvent.getBClass().getName(),timeModified);
     System.out.println("Modified class:"+classEvent.getBClass().getName());
   }
 
  
   /**
-   * This method is called whenever a class related event happens.
-   * It calls the classCreated, classModified and trackTypeTime methods.
-   * It also updated the number of state changes count. 
+   * This method is called when a class related event occurs.
+   * It calls the classCreated methos first. If the method returns false then
+   * it calls the classModified and trackTypeTime methods.
+   * It also keeps a running count of state changes. 
    */
   @Override 
   public synchronized void classStateChanged(ClassEvent classEvent){
@@ -132,9 +128,9 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
 
   /**
    * This method is used to determine active and idle typing time when
-   * a class editor is opened. A gap between two events greater than 45 seconds 
+   * a class editor is opened. A gap between two compile events greater than 45 seconds 
    * is counted as idle typing time. Gaps that are less than 45 seconds are
-   * counted as active typing time.
+   * counted as active typing time. The classModified method is also called.
    */
   private void trackTypeTime(ClassEvent classEvent){
     try{
@@ -144,7 +140,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     
       if(prevTypedTime != 0){
         long typeTime = currTypedTime - prevTypedTime;
-        if(prevTypedCount != currTypedCount && typeTime < 45000){ //a gap time 45 seconds or greater is counted as idle time
+        if(prevTypedCount != currTypedCount && typeTime < 45000){
           activeTypeTime = activeTypeTime + typeTime;
         }else{
           idleTypeTime = idleTypeTime + typeTime;

@@ -20,8 +20,9 @@ public class JSONFileGenerator implements ReportPublisher {
   TreeMap<String,Data> jsonData;
 
   /**
-   * This method generates a json file based on the TreeMap passed to the method.
+   * This method generates a json file using the TreeMap passed to the method.
    * @param listenerMetricsTreeMaps Metric data gathered in the main runner from all listeners
+   * @return the json file
    */
   public File generateReport(TreeMap<String,Data> listenerMetricsTreeMaps, String filePath){ 
     try {

@@ -1,8 +1,8 @@
 package plugin;
 
 /**
- * This class contains the TreeMap (using the AdapterInterface) to be iterated through.
- *  It also contains a link to acces an intantiated Data iterator (either by key or by value)
+ * This class contains the TreeMap (using the AdapterInterface) that will be iterated through.
+ *  It also contains a link to acces an initialised Data iterator (either by key or by value)
  */
 public class DataCollection implements DataContainer{
   AdapterInterface adapterData;
@@ -11,8 +11,8 @@ public class DataCollection implements DataContainer{
   }
   
   /**
-   * The method returns an intantiated Data iterator 
-   * @param iteratorCode digit that intantiates a specific iterator(0 - ByKeyIterator, 1 - ByValueIterator)
+   * The method returns an initialised Data iterator 
+   * @param iteratorCode digit that specifies the iterator(0 - ByKeyIterator, 1 - ByValueIterator)
    */
   public DataIterator getDataIterator(int iteratorCode){
     if(iteratorCode == 0)
