@@ -149,6 +149,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
         }else{
           idleTypeTime = idleTypeTime + typeTime;
         }
+        classModified(System.currentTimeMillis(),classEvent);
       }
       prevTypedCount = currTypedCount;
       prevTypedTime = currTypedTime;
