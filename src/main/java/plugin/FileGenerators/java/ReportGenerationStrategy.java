@@ -1,6 +1,7 @@
-package plugin;
+package plugin.FileGenerators.java;
 
 import java.util.TreeMap;
+import plugin.Data;
 
 /**
  * An interface used to represent the Stategy design pattern.

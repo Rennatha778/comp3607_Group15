@@ -1,4 +1,4 @@
-package plugin;
+package plugin.Iterators.java;
 
 /**
  * Interface used to represent the Iterator design pattern 

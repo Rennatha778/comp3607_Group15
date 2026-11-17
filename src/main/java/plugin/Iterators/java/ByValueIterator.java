@@ -1,6 +1,14 @@
-package plugin;
+package plugin.Iterators.java;
 
 import java.util.TreeMap;
+import plugin.Adapters.java.AdapterInterface;
+import plugin.Adapters.java.DataAdapter;
+import plugin.Adapters.java.TreeAdapter;
+import plugin.Adapters.java.LongAdapter;
+import plugin.Adapters.java.IntAdapter;
+import plugin.Data;
+
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

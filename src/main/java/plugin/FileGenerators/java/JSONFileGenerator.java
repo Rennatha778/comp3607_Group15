@@ -1,7 +1,10 @@
-package plugin;
+package plugin.FileGenerators.java;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import plugin.Data;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.TreeMap;
@@ -47,7 +50,7 @@ public class JSONFileGenerator implements ReportGenerationStrategy {
    * This method places student information at the beginning of the TreeMap
    * @param listenerMetricsTreeMaps  Metric data gathered in the main runner from all listeners
    */
-  protected TreeMap<String,Data> compileTreeMaps(TreeMap<String,Data> listenerMetricsTreeMaps){
+  public TreeMap<String,Data> compileTreeMaps(TreeMap<String,Data> listenerMetricsTreeMaps){
     this.listenerMetricsTreeMap = listenerMetricsTreeMaps;
     Data studentData = new Data();
 

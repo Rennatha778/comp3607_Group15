@@ -1,4 +1,4 @@
-package plugin;
+package plugin.EventListeners.java;
 
 import bluej.extensions2.BClass;
 import bluej.extensions2.PackageNotFoundException;
@@ -6,6 +6,8 @@ import bluej.extensions2.ProjectNotOpenException;
 import bluej.extensions2.editor.JavaEditor;
 import bluej.extensions2.event.ClassEvent;
 import bluej.extensions2.event.ClassListener;
+import plugin.Data;
+
 import java.util.TreeMap;
 import java.util.ArrayList;
 

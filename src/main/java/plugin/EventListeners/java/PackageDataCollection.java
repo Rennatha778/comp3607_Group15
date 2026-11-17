@@ -1,7 +1,9 @@
-package plugin;
+package plugin.EventListeners.java;
 
 import bluej.extensions2.event.PackageEvent;
 import bluej.extensions2.event.PackageListener;
+import plugin.Data;
+
 
 
 /**
@@ -38,8 +40,8 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
       incrementNumberOfPackagesClosed();
   }
   
-  protected void incrementNumberOfPackagesOpened(){this.numPackagesOpened++;}
-  protected void incrementNumberOfPackagesClosed(){this.numPackagesClosed++;}
-  protected int getNumberOfPackagesOpened(){return this.numPackagesOpened;}
-  protected int getNumberOfPackagesClosed(){return this.numPackagesClosed;}
+  public void incrementNumberOfPackagesOpened(){this.numPackagesOpened++;}
+  public void incrementNumberOfPackagesClosed(){this.numPackagesClosed++;}
+  public int getNumberOfPackagesOpened(){return this.numPackagesOpened;}
+  public int getNumberOfPackagesClosed(){return this.numPackagesClosed;}
 }

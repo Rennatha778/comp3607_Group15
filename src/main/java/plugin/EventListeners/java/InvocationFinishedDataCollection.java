@@ -1,7 +1,8 @@
-package plugin;
+package plugin.EventListeners.java;
 
 import bluej.extensions2.event.InvocationFinishedEvent;
 import bluej.extensions2.event.InvocationFinishedListener;
+import plugin.Data;
 
 
 /**
@@ -29,6 +30,6 @@ public class InvocationFinishedDataCollection implements InvocationFinishedListe
 
     }
 
-    protected void incrmentNumberOfMethodRuns(){this.numMethodRuns++;}
-    protected int getNumberOfMethodRuns(){return this.numMethodRuns;}
+    public void incrmentNumberOfMethodRuns(){this.numMethodRuns++;}
+    public int getNumberOfMethodRuns(){return this.numMethodRuns;}
 }

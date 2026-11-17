@@ -1,4 +1,4 @@
-package plugin;
+package plugin.FileGenerators.java;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -17,6 +17,9 @@ import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.SimpleTimePeriod;
+
+import plugin.Data;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;

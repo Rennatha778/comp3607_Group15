@@ -1,6 +1,7 @@
-package plugin;
+package plugin.Adapters.java;
 
 import java.util.TreeMap;
+
 
 /**
  * Specific adapter class used to store and return a TreeMap of type {@code TreeMap<String,Integer>}.

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import bluej.extensions2.event.PackageEvent;
 import bluej.extensions2.event.ClassEvent.EventType;
+import plugin.EventListeners.java.CompileDataCollection;
 public class CompileTests {
   static CompileDataCollection testerCompileListener;
   @BeforeEach 

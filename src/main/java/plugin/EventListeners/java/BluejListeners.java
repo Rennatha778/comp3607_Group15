@@ -1,4 +1,6 @@
-package plugin;
+package plugin.EventListeners.java;
+
+import plugin.Data;
 
 /**
  * An interface implemented by all plugin BlueJ Listeners.

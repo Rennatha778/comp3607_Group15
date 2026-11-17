@@ -1,6 +1,8 @@
-package plugin;
+package plugin.EventListeners.java;
 
 import bluej.extensions2.event.*;
+import plugin.Data;
+
 
 /**
  * This class listens for BlueJ events and collects general event metrics and session time metrics
@@ -40,7 +42,7 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
    * Active time is elapsed time less than 1 minute (60 seconds).
    * A running total for idle time is also kept in this method.
    */
-  private synchronized void trackGap(){
+  public synchronized void trackGap(){
     if((currEventTime - prevEventTime) > 60000){ 
       totalIdleTime = totalIdleTime + (currEventTime - prevEventTime);
     }
@@ -52,7 +54,7 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
    * its respective event count. 
    * @param event a BlueJ event 
    */
-  private void updateEventCount(ExtensionEvent event){
+  public void updateEventCount(ExtensionEvent event){
     if(event instanceof ApplicationEvent){
       numApplicationEvent++;
     }else if(event instanceof CompileEvent){
@@ -73,7 +75,7 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
    * @param sessionStartTime System currentTimeMills when BlueJ started
    * @param sessionEndTime System currentTimeMills when BlueJ ended
    */
-  protected void getSessionTimes(long sessionStartTime, long sessionEndTime){
+  public void getSessionTimes(long sessionStartTime, long sessionEndTime){
     this.sessionStartTime = sessionStartTime;
     this.sessionEndTime = sessionEndTime;
     this.totalSessionTime = calculateTotalSessionTime(this.sessionStartTime,this.sessionEndTime);
@@ -85,7 +87,7 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
    * @param sessionStartTime System currMil when BlueJ started
    * @param sessionEndTime System currMills when BlueJ terminated 
    */
-  protected long calculateTotalSessionTime(long sessionStartTime, long sessionEndTime){
+  public long calculateTotalSessionTime(long sessionStartTime, long sessionEndTime){
     if(sessionEndTime != 0 && sessionStartTime != 0)
       return sessionEndTime - sessionStartTime;
     return (long) 0;

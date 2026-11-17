@@ -1,10 +1,12 @@
-package plugin;
+package plugin.FileGenerators.java;
 
 import java.util.TreeMap;
 
+import plugin.Data;
+
 public class ReportGenerationContext {
   protected ReportGenerationStrategy strategy;
-  protected void setFileGenerationStrategy(ReportGenerationStrategy strategy){
+  public void setFileGenerationStrategy(ReportGenerationStrategy strategy){
     this.strategy = strategy;
   }
   

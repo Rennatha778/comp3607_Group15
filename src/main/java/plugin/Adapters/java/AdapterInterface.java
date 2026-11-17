@@ -1,4 +1,4 @@
-package plugin;
+package plugin.Adapters.java;
 import java.util.TreeMap;
 
 /**

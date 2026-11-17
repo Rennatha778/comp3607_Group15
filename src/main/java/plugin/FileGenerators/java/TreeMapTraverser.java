@@ -1,6 +1,16 @@
-package plugin;
+package plugin.FileGenerators.java;
 
 import java.util.TreeMap;
+
+import plugin.Data;
+import plugin.Adapters.java.DataAdapter;
+import plugin.Adapters.java.IntAdapter;
+import plugin.Adapters.java.LongAdapter;
+import plugin.Adapters.java.TreeAdapter;
+import plugin.Iterators.java.DataCollection;
+import plugin.Iterators.java.DataContainer;
+import plugin.Iterators.java.DataIterator;
+
 /**
  * This class contains a method that traverses through a TreeMap 
  * to return a key's value in the map.

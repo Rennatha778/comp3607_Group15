@@ -1,5 +1,9 @@
 package plugin;
 import org.junit.jupiter.api.Test;
+
+import plugin.Adapters.java.IntAdapter;
+import plugin.Iterators.java.ByValueIterator;
+
 import org.junit.jupiter.api.BeforeAll;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

@@ -1,6 +1,7 @@
-package plugin;
+package plugin.EventListeners.java;
 
 import bluej.extensions2.event.*;
+import plugin.Data;
 
 /**
  * This class listens for and collects BlueJ complie event metrics
@@ -124,7 +125,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * encountered while BlueJ is in session. 
    * @param errorMessage The String variable containing the specific compile error message
    */
-  protected void updateErrorCount(String errorMessage){
+  public void updateErrorCount(String errorMessage){
     if (errorMessage.contains("expected")){
       incrementTotalExpectedErrorsCount();
      }else if(errorMessage.contains("symbol")){
@@ -144,7 +145,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * @param compileStartedTime System currentTimeMills when compilation started
    * @param compileEndedTime System currentTimeMills when compilation ended
    */
-  protected synchronized void calculateTotalCompileTime(long compileStartedTime, long compileEndedTime){
+  public synchronized void calculateTotalCompileTime(long compileStartedTime, long compileEndedTime){
     setTotalCompileTime(compileEndedTime - compileStartedTime);
   }
 
@@ -157,7 +158,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * @param errorFixedStartTime System currentTimeMills when compilation error was was recognised
    * @param errorFixedEndTime System currentTimeMills when no error detected and compilation was successful
    */
-  protected void calaculateTotalErrorFixedTime(long errorFixedStartTime, long errorFixedEndTime){
+  public void calaculateTotalErrorFixedTime(long errorFixedStartTime, long errorFixedEndTime){
     if(errorFixedStartTime != (long)0){
       setTotalCorrectionTime(errorFixedStartTime,errorFixedEndTime);
       setErrorFixedEndTime((long)0);
@@ -166,18 +167,18 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
     }
   }
 
-  protected void incrementNumCompileSuccessful(){this.numCompileSuccessful++;}
-  protected void incrementNumCompileFailed(){this.numCompileFailed++;}
-  protected void incrementTotalExpectedErrorsCount(){this.expectedErrors++;}
-  protected void incrementTotalSymbolErrorsCount(){this.symbolError++;}
-  protected void incrementTotalUnclosedErrorsCount(){this.unclosedError++;}
-  protected void incrementTotalReturnErrorsCount(){this.returnError++;}
-  protected void incrementTotalOtherErrorsCount(){this.returnError++;}
-  protected void incrementTotalCorrected(){this.totalCorrected++;}
+  public void incrementNumCompileSuccessful(){this.numCompileSuccessful++;}
+  public void incrementNumCompileFailed(){this.numCompileFailed++;}
+  public void incrementTotalExpectedErrorsCount(){this.expectedErrors++;}
+  public void incrementTotalSymbolErrorsCount(){this.symbolError++;}
+  public void incrementTotalUnclosedErrorsCount(){this.unclosedError++;}
+  public void incrementTotalReturnErrorsCount(){this.returnError++;}
+  public void incrementTotalOtherErrorsCount(){this.returnError++;}
+  public void incrementTotalCorrected(){this.totalCorrected++;}
 
-  protected void setTotalCompileTime(long totalCompileTime){this.totalCompileTime = this.totalCompileTime + totalCompileTime;}
-  protected void setErrorFixedEndTime(long errorFixedEndTime){this.errorFixEndTime = errorFixedEndTime;}
-  protected void setTotalCorrectionTime(long errorFixedStartTime, long errorFixedEndTime){
+  public void setTotalCompileTime(long totalCompileTime){this.totalCompileTime = this.totalCompileTime + totalCompileTime;}
+  public void setErrorFixedEndTime(long errorFixedEndTime){this.errorFixEndTime = errorFixedEndTime;}
+  public void setTotalCorrectionTime(long errorFixedStartTime, long errorFixedEndTime){
     this.totalCorrectionTime += (errorFixedEndTime - errorFixedStartTime);
   }
   
@@ -187,7 +188,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * or the value being passed in is zero.
    * @param errorFixedStartTime A new value for errorFixedStartTime
    */
-  protected void setErrorFixedStartTime(long errorFixedStartTime){
+  public void setErrorFixedStartTime(long errorFixedStartTime){
     if(getErrorFixedStartTime() == (long)0 && getErrorFixedEndTime() == (long)0 || errorFixedStartTime == 0){
       this.errorFixStartTime = errorFixedStartTime;
     }
@@ -199,7 +200,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * @param totalNumberOfCompiles running count of compilations from BlueJ session (failed and successful).
    * @return an approximated average compile time in ms
    */
-  protected int calculateAverageCompileTime(long totalCompileTime, int totalNumberOfCompiles){
+  public int calculateAverageCompileTime(long totalCompileTime, int totalNumberOfCompiles){
     return (int)totalCompileTime/totalNumberOfCompiles;
   }
 
@@ -209,38 +210,38 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * @param totalCorrected running count of the number of times an error was corrected
    * @return an approximated average correction time in ms
    */
-  protected int calculateAverageCorrectionTime(long totalCorrectionTime, int totalCorrected){
+  public int calculateAverageCorrectionTime(long totalCorrectionTime, int totalCorrected){
     return (int)totalCorrectionTime/totalCorrected;
   }
 
-  protected void setStartCompileTime(long startCompileTime){this.compileStartTime = startCompileTime;}
-  protected void setEndCompileTime(long endCompileTime){this.compileEndTime = endCompileTime;}
+  public void setStartCompileTime(long startCompileTime){this.compileStartTime = startCompileTime;}
+  public void setEndCompileTime(long endCompileTime){this.compileEndTime = endCompileTime;}
 
 
-  protected int getTotalCompileSuccessful(){return this.numCompileSuccessful;}
-  protected int getTotalCompileFail(){return this.numCompileFailed;}
-  protected int getExpectedErrorCount(){return this.expectedErrors;}
-  protected int getSymbolErrorCount(){return this.symbolError;}
-  protected int getUnclodedErrorCount(){return this.unclosedError;}
-  protected int getReturnErrorCount(){return this.returnError;}
-  protected int getOtherErrorCount(){return this.otherError;}
-  protected int getTotalCorrected(){return this.totalCorrected;}
+  public int getTotalCompileSuccessful(){return this.numCompileSuccessful;}
+  public int getTotalCompileFail(){return this.numCompileFailed;}
+  public int getExpectedErrorCount(){return this.expectedErrors;}
+  public int getSymbolErrorCount(){return this.symbolError;}
+  public int getUnclodedErrorCount(){return this.unclosedError;}
+  public int getReturnErrorCount(){return this.returnError;}
+  public int getOtherErrorCount(){return this.otherError;}
+  public int getTotalCorrected(){return this.totalCorrected;}
   
   /**
    * This method sums up all the compilation error encountered during
    * the session time.
    * @return Total count of error that occurred in the session
    */
-  protected int getTotalErrorCount(){
+  public int getTotalErrorCount(){
     this.totalNumError = getExpectedErrorCount()+ getSymbolErrorCount()+getUnclodedErrorCount()
     +getReturnErrorCount()+getOtherErrorCount();
     return this.totalNumError;
   }
 
-  protected long getCompileStartedTime(){return this.compileStartTime;}
-  protected long getCompileEndedTime(){return this.compileEndTime;}
-  protected long getErrorFixedStartTime(){return this.errorFixStartTime;}
-  protected long getErrorFixedEndTime(){return this.errorFixEndTime;}
-  protected long getTotalCompileTime(){return this.totalCompileTime;}
-  protected long getTotalCorretionTime(){return this.totalCorrectionTime;}
+  public long getCompileStartedTime(){return this.compileStartTime;}
+  public long getCompileEndedTime(){return this.compileEndTime;}
+  public long getErrorFixedStartTime(){return this.errorFixStartTime;}
+  public long getErrorFixedEndTime(){return this.errorFixEndTime;}
+  public long getTotalCompileTime(){return this.totalCompileTime;}
+  public long getTotalCorretionTime(){return this.totalCorrectionTime;}
 }

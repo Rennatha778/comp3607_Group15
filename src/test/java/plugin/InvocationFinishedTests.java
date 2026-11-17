@@ -1,6 +1,9 @@
 package plugin;
 
 import org.junit.jupiter.api.Test;
+
+import plugin.EventListeners.java.InvocationFinishedDataCollection;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 

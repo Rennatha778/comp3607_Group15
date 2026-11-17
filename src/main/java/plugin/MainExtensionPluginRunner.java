@@ -1,6 +1,17 @@
 package plugin;
 
 import bluej.extensions2.*;
+import plugin.EventListeners.java.ClassDataCollection;
+import plugin.EventListeners.java.CompileDataCollection;
+import plugin.EventListeners.java.InvocationFinishedDataCollection;
+import plugin.EventListeners.java.MainEventDataCollection;
+import plugin.EventListeners.java.PackageDataCollection;
+import plugin.FileGenerators.java.ReportGenerationContext;
+import plugin.FileGenerators.java.ReportGenerationStrategy;
+import plugin.FileGenerators.java.JSONFileGenerator;
+import plugin.FileGenerators.java.PDFFileGenerator;
+
+
 import java.util.TreeMap;
 
 /**

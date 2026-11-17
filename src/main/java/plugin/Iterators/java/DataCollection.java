@@ -1,4 +1,6 @@
-package plugin;
+package plugin.Iterators.java;
+
+import plugin.Adapters.java.AdapterInterface;
 
 /**
  * This class contains the TreeMap (using the AdapterInterface) that will be iterated through.

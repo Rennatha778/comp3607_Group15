@@ -1,4 +1,4 @@
-package plugin;
+package plugin.FileGenerators.java;
 
 import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -117,7 +117,7 @@ public class TableGenerator {
    * @param arrayOfStrings A column with string values
    * @return lenght of the element with the largest number of characters
    */
-  protected int getLargestStringLenght(String[] arrayOfStrings){
+  public int getLargestStringLenght(String[] arrayOfStrings){
     int largestStringLenght = 0;
     for(String string :arrayOfStrings){
       if(string.length() > largestStringLenght){
@@ -131,7 +131,7 @@ public class TableGenerator {
   /**
    * The method prints a serise of -es on a PDF page.
    */
-  protected void printSpacerBar(PDPageContentStream content1, int lagestStringLenght, Object[] colValues, String[] headings){
+  public void printSpacerBar(PDPageContentStream content1, int lagestStringLenght, Object[] colValues, String[] headings){
     //- (4 * headings.length) - (5 * colValues.length) + 2
     int barLenght = getSpacingBarLenght(colValues,headings);
     try{
@@ -147,7 +147,7 @@ public class TableGenerator {
   /**
    * The method gets the spacing bar lenght by adding up the individual column lenghts 
    */
-  protected int getSpacingBarLenght(Object[] columnValues, String[] tableHeadings){
+  public int getSpacingBarLenght(Object[] columnValues, String[] tableHeadings){
     int spacingBarLenght = 0;
     for(int lenght : getColoumLenght(columnValues, tableHeadings)){
       spacingBarLenght += lenght;
@@ -162,7 +162,7 @@ public class TableGenerator {
    * column contains numbers.
    * @return An array of column lenghts
    */
-  protected int[] getColoumLenght(Object[] coloumValues, String[] headings){
+  public int[] getColoumLenght(Object[] coloumValues, String[] headings){
     int numColoums = coloumValues.length;
     int[] coloumLenghts = new int[numColoums];
     int i = 0;
