@@ -9,16 +9,16 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 public class TableGenerator {
   /**
    * This method generates a table on a pdf page using the parameters passed into the method
-   * @param tableHeading The string headings for each column in the table
-   * @param columValues An object array of other specifc type arrays that storing column data
+   * @param tableHeadings The string headings for each column in the table
+   * @param columVals An object array of other specifc type arrays that storing column data
    * @param content1 PDF content stream used for writing to the PDF
    * @param xValue The x coordinate on the page where the top of the table will be drawn
    * @param yValue The y coordinate on the page where the top of the table will be drawn
    * @return The new y coordinate that the next item on the pdf should start from
    */
-  public int generateTable(String[] tableHeadings, Object[]columValues, int numberOfRows, PDPageContentStream content1, int xValue, int yValue ){
+  public int generateTable(String[] tableHeadings, Object[]columVals, int numberOfRows, PDPageContentStream content1, int xValue, int yValue ){
     String[] coloumNames  = tableHeadings;
-    Object[] columnValues = columValues;
+    Object[] columnValues = columVals;
     
     int numberOfColumns = coloumNames.length; 
     int pageXValue = xValue, pageYValue = yValue;
@@ -48,6 +48,8 @@ public class TableGenerator {
       tableMovingYValue = pageYValue;
       content1.newLineAtOffset(pageXValue, pageYValue);
 
+      int[] columnLengts = getColoumLenght(columnValues,tableHeadings);
+
     for(row = 0; row < numberOfRows + 2; row++){
       currentCol = 0;
       for(col = 0; col < numberOfColumns; col++ ){
@@ -74,13 +76,14 @@ public class TableGenerator {
         if(row == 1 && col == 0){
          printSpacerBar(content1, largetsStringLenght,columnValues,coloumNames);
         }
-
-        tableMovingXValue += getColoumLenght(columnValues, coloumNames)[col] * 6;
         
-        currentCol++;
-        content1.endText();
-        content1.beginText();
-        content1.newLineAtOffset(tableMovingXValue, tableMovingYValue);
+        tableMovingXValue += getColoumLenght(columnValues, coloumNames)[col] * 6 + 12;
+        if(col+1 != numberOfColumns){
+          currentCol++;
+          content1.endText();
+          content1.beginText();
+          content1.newLineAtOffset(tableMovingXValue, tableMovingYValue);
+        }
       
       }
 
@@ -132,7 +135,7 @@ public class TableGenerator {
     //- (4 * headings.length) - (5 * colValues.length) + 2
     int barLenght = getSpacingBarLenght(colValues,headings);
     try{
-      for(int i = 0; i < barLenght ; i ++){
+      for(int i = 0; i < barLenght + 3 ; i ++){
         content1.showText("-");
       }
     }catch(IOException e){
@@ -166,13 +169,13 @@ public class TableGenerator {
     for(Object coloum : coloumValues){
       if(coloum instanceof String[]){
         if(getLargestStringLenght((String[])coloum) > headings[i].length()){
-          coloumLenghts[i] = getLargestStringLenght((String[])coloum) + 10;
+          coloumLenghts[i] = getLargestStringLenght((String[])coloum) + 3;
         }else{
-          coloumLenghts[i] = headings[i].length() + 10;
+          coloumLenghts[i] = headings[i].length() + 3;
         }
         
       }else{
-        coloumLenghts[i] = headings[i].length() + 10;
+        coloumLenghts[i] = headings[i].length() + 3;
       }
 
       i++;

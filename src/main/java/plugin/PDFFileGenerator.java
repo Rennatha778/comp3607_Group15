@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * This class contains a method that generates a PDF file
  */
-public class PDFFileGenerator implements ReportPublisher {
+public class PDFFileGenerator implements ReportStrategy {
   TreeMap<String,Data> dataTreeMap;
   TreeMapTraverser treeMapTraverser;
   TableGenerator tableGenerator = new TableGenerator();

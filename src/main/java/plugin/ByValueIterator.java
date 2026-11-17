@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * This DataITerator subclass provides the functionality to traverse through
- * a TreeMap by value (either a Integer, Long or TreeMap<String,Long>).
+ * a TreeMap by value (either a Integer, Long or {@code TreeMap<String,Long>)}.
  */
 public class ByValueIterator implements DataIterator {
   private List dataByValue;

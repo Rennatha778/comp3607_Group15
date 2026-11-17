@@ -5,6 +5,11 @@ package plugin;
  *  It also contains a link to acces an initialised Data iterator (either by key or by value)
  */
 public class DataCollection implements DataContainer{
+  /**
+   * This constructor initialises the AdapterInterface variable with a 
+   * subclass instance.
+   * @param metrics An instantiated subclass of AdapterInterface
+   */
   AdapterInterface adapterData;
   public DataCollection(AdapterInterface metrics){
     this.adapterData = metrics;
@@ -13,6 +18,7 @@ public class DataCollection implements DataContainer{
   /**
    * The method returns an initialised Data iterator 
    * @param iteratorCode digit that specifies the iterator(0 - ByKeyIterator, 1 - ByValueIterator)
+   * @return instantiated DataIterator subclass
    */
   public DataIterator getDataIterator(int iteratorCode){
     if(iteratorCode == 0)

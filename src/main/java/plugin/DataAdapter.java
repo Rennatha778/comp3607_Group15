@@ -3,11 +3,11 @@ package plugin;
 import java.util.TreeMap;
 
 /**
- * This is a specific adapter class used to store and return a TreeMap of type TreeMap<String,Data>.
+ * This is a specific adapter class used to store and return a TreeMap of type {@code TreeMap<String,Data>}.
  */
 public class DataAdapter implements AdapterInterface{
   /**
-   * TreeMap that will store the specific TreeMap type (TreeMap<String,Data>) passed in by calling class
+   * TreeMap that will store the specific TreeMap type {@code (TreeMap<String,Data>)} passed in by calling class
    */
   TreeMap<String,Data> DataTreeMap;
 

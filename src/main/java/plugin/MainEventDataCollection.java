@@ -70,6 +70,8 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
    * This method is called when BlueJ is terminated.
    * It receives session start and end times from the main runner.
    * It also calls the method to calculate total session time.
+   * @param sessionStartTime System currentTimeMills when BlueJ started
+   * @param sessionEndTime System currentTimeMills when BlueJ ended
    */
   protected void getSessionTimes(long sessionStartTime, long sessionEndTime){
     this.sessionStartTime = sessionStartTime;

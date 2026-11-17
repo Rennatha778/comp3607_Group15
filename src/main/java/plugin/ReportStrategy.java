@@ -7,7 +7,7 @@ import java.util.TreeMap;
  * It contains a method which generates a report file and returns it to
  * the calling class.
  */
-public interface ReportPublisher {
+public interface ReportStrategy {
   /**
    * The method accepts a TreeMap of String type keys and Data class values, 
    * create a report from the TreeMap and return the file created.

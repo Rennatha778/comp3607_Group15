@@ -51,6 +51,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
 
   /**
    * This method is used to output the change in class name to the BlueJ debugger log
+   * @param classEvent BlueJ class event that occurred
    */
   @Override
   public void classNameChanged(ClassEvent classEvent){
@@ -63,6 +64,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * This method is used to track deleted classes.
    * Their names are stored in a TreeMap, along with the 
    * system time they were removed
+   * @param classEvent BlueJ class event that occurred
    */
   @Override 
   public void classRemoved(ClassEvent classEvent){
@@ -74,6 +76,8 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * This method tracks the creation of new classes within a BlueJ session.
    * Their names are stored in a TreeMap, along with the 
    * system time they were created
+   * @param creationTime System currentTimeMill captured at the time class was created
+   * @param classEvent BlueJ class event that occurred
    * @return True/false depending on if the current class is determined to be a new class
    */
   private synchronized boolean classCreated(Long creationTime, ClassEvent classEvent){
@@ -99,6 +103,8 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * This method tracks all the classes that were modified during 
    * the BlueJ session. Their names are stored in a TreeMap along with
    * the time modified.
+   * @param timeModified System currentTimeMills captured when class was modified
+   * @param classEvent BlueJ class event that occurred
    */
   private synchronized void classModified(Long timeModified, ClassEvent classEvent){
     modifiedClassesTreeMap.put(classEvent.getBClass().getName(),timeModified);
@@ -111,6 +117,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * It calls the classCreated methos first. If the method returns false then
    * it calls the classModified and trackTypeTime methods.
    * It also keeps a running count of state changes. 
+   * @param classEvent BlueJ class event that occurred
    */
   @Override 
   public synchronized void classStateChanged(ClassEvent classEvent){
@@ -131,6 +138,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * a class editor is opened. A gap between two compile events greater than 45 seconds 
    * is counted as idle typing time. Gaps that are less than 45 seconds are
    * counted as active typing time. The classModified method is also called.
+   * @param classEvent BlueJ class event that occurred
    */
   private void trackTypeTime(ClassEvent classEvent){
     try{

@@ -20,6 +20,7 @@ public class InvocationFinishedDataCollection implements InvocationFinishedListe
     /**
      * Thid method is called when a method has finised running.
      * It also calls a function to increment the numMethodRuns counter.
+     * @param invocationFinishedEvent A BlueJ invocation finised event
      */
     @Override
     public void invocationFinished(InvocationFinishedEvent invocationFinishedEvent){

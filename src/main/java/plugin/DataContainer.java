@@ -9,7 +9,7 @@ public interface DataContainer {
   /**
    * This method returns an instantiated subclass of DataIterator (either ByKeyIterator or ByValueIterator)
    * @param iteratorCode digit that specifies the iterator(0 - ByKeyIterator, 1 - ByValueIterator)
-   * @return an instantiated subclass of DataIterator
+   * @return An instantiated subclass of DataIterator
    */
   public DataIterator getDataIterator(int iteratorCode);
 }

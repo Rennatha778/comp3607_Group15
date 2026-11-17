@@ -22,7 +22,8 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
 
   @Override 
   /**
-   *This method is called when an package is opened and it updates the opened package counter
+   * This method is called when a package is opened and it also updates the opened package counter
+   * @param packageEvent A BlueJ package event that occurred
    */
   public void packageOpened(PackageEvent packageEvent){ 
       incrementNumberOfPackagesOpened();   
@@ -30,6 +31,7 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
 
   /**
    *This method is called when an package is closed and it updates the closed package counter
+   *@param packageEvent A BlueJ package event that occurred
    */
   @Override 
   public void packageClosing(PackageEvent packageEvent){

@@ -7,6 +7,7 @@ import java.util.TreeMap;
  * This class is the main file that first runs when BlueJ opens.
  * The class also instantiates the other class listeners and  
  * connects then to the current BlueJ instance.
+ * It also represents the facade design pattern 
  */
 public class MainExtensionPluginRunner extends Extension {
   private long sessionStartTime;
@@ -71,7 +72,7 @@ public class MainExtensionPluginRunner extends Extension {
   /**
    * This method gathers all data that was collected by the event listeners,
    * which were stored in TreeMaps and combines them into a single TreeMap.
-   * @return A populated TreeMap<String,Data> with metrics from allclass listeners
+   * @return A populated {@code TreeMap<String,Data>} with metrics from allclass listeners
    */
   protected TreeMap<String, Data> collectListenerMetrics(){
     TreeMap<String,Data> listenerMetricTreeMaps = new TreeMap<String,Data>();
@@ -87,11 +88,12 @@ public class MainExtensionPluginRunner extends Extension {
    * Method class classes responsible for generating reports in different formats
    * using the data in the combined TreeMap. The report files are stored
    * in the location directed by the filePath String variable.
+   * @param listenerMetricTreeMaps TreeMap with all BlueJ class listener metrics 
    */
   public void generateReports(TreeMap<String,Data> listenerMetricTreeMaps){
     String filePath = "C:\\Users\\Owner\\Documents\\PluginFiles";
-    ReportPublisher jsonReport = new JSONFileGenerator();
-    ReportPublisher pdfReport = new PDFFileGenerator();
+    ReportStrategy jsonReport = new JSONFileGenerator();
+    ReportStrategy pdfReport = new PDFFileGenerator();
 
     jsonReport.generateReport(listenerMetricTreeMaps, filePath);
     pdfReport.generateReport(listenerMetricTreeMaps, filePath);

@@ -16,7 +16,7 @@ public class ByKeyIterator implements DataIterator{
    * Constructor initalises the class TreeMap (keyTreeMap) 
    * and the iterator (keyIterator) which will be used to iterate
    *  through the TreeMap's keys
-   * @param treeMapValue Adapter class storing specific TreeMap Type
+   * @param treeMapKey Adapter class storing specific TreeMap Type
    */
   public ByKeyIterator(AdapterInterface treeMapKey){  
     this.keyTreeMap = treeMapKey.getMap();

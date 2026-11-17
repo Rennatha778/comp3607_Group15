@@ -51,6 +51,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   /**
    * This method is called when compilation starts.
    * Its start time is recorded.
+   * @param event BlueJ compile event that occurred
    */
   @Override 
   public void compileStarted(CompileEvent event){
@@ -64,6 +65,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * The time it failed is recorded and the method to calculate
    * compilation time elapsed is called. A call to increment the number 
    * of failed compilations is also called.
+   * @param event BlueJ compile event that occurred
    */
   @Override 
   public void compileFailed(CompileEvent event){
@@ -78,6 +80,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * using the setErrorFixedStartTime method. A call to the updateErrorCount 
    * method is also made as well as key information about the error is printed to 
    * the BlueJ debugger log
+   * @param event BlueJ compile event that occurred
    */
   @Override 
   public void compileError(CompileEvent event){
@@ -95,6 +98,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * compilation time elapsed is called. If there was a pending error
    * that was resolved, the elapsed time to correct that error(s) is also
    * calculated. A call to increment the number of successful compilations is also made.
+   * @param event BlueJ compile event that occurred
    */
   @Override 
   public void compileSucceeded(CompileEvent event){
@@ -108,6 +112,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
 
   /**
    * This method prints out the warning message to the BlueJ debugger log
+   * @param event BlueJ compile event that occurred
    */
   @Override 
   public void compileWarning(CompileEvent event){
@@ -136,6 +141,8 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   /**
    * This method keeps a running total of compile times for an
    * entire BlueJ session.
+   * @param compileStartedTime System currentTimeMills when compilation started
+   * @param compileEndedTime System currentTimeMills when compilation ended
    */
   protected synchronized void calculateTotalCompileTime(long compileStartedTime, long compileEndedTime){
     setTotalCompileTime(compileEndedTime - compileStartedTime);
@@ -147,6 +154,8 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * (errorFixedStartTime is not zero), then a call to reset errorFixedStartTime 
    * and errorFixedEndTime is made as well as a call to increment the total number 
    * of errors corrected.
+   * @param errorFixedStartTime System currentTimeMills when compilation error was was recognised
+   * @param errorFixedEndTime System currentTimeMills when no error detected and compilation was successful
    */
   protected void calaculateTotalErrorFixedTime(long errorFixedStartTime, long errorFixedEndTime){
     if(errorFixedStartTime != (long)0){
@@ -186,6 +195,8 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
 
   /**
    * This method calculates the average compile time 
+   * @param totalCompileTime running total of compile times for BlueJ session
+   * @param totalNumberOfCompiles running count of compilations from BlueJ session (failed and successful).
    * @return an approximated average compile time in ms
    */
   protected int calculateAverageCompileTime(long totalCompileTime, int totalNumberOfCompiles){
@@ -194,6 +205,8 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
 
   /**
    * This method calculates the average correction time 
+   * @param totalCorrectionTime running total of time taken to correct errors preventing a successful compilation
+   * @param totalCorrected running count of the number of times an error was corrected
    * @return an approximated average correction time in ms
    */
   protected int calculateAverageCorrectionTime(long totalCorrectionTime, int totalCorrected){
@@ -216,6 +229,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   /**
    * This method sums up all the compilation error encountered during
    * the session time.
+   * @return Total count of error that occurred in the session
    */
   protected int getTotalErrorCount(){
     this.totalNumError = getExpectedErrorCount()+ getSymbolErrorCount()+getUnclodedErrorCount()
