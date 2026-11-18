@@ -1,4 +1,4 @@
-package plugin.FileGenerators.java;
+package plugin.Iterators.java;
 
 import java.util.TreeMap;
 
@@ -7,9 +7,6 @@ import plugin.Adapters.java.DataAdapter;
 import plugin.Adapters.java.IntAdapter;
 import plugin.Adapters.java.LongAdapter;
 import plugin.Adapters.java.TreeAdapter;
-import plugin.Iterators.java.DataCollection;
-import plugin.Iterators.java.DataContainer;
-import plugin.Iterators.java.DataIterator;
 
 /**
  * This class contains a method that traverses through a TreeMap 
@@ -44,7 +41,7 @@ public class TreeMapTraverser {
       }
 
      DataContainer subMetricInt = new DataCollection(new IntAdapter(data.getIntTreeMap()));
-     DataCollection subMetricLong = new DataCollection(new LongAdapter(data.getLongTreeMap()));
+     DataContainer subMetricLong = new DataCollection(new LongAdapter(data.getLongTreeMap()));
      DataContainer objectionCreation = new DataCollection(new TreeAdapter(data.getObjectCreationMap()));
       
 

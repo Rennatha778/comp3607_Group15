@@ -102,7 +102,7 @@ public class MainExtensionPluginRunner extends Extension {
    * @param listenerMetricTreeMaps TreeMap with all BlueJ class listener metrics 
    */
   public void generateReports(TreeMap<String,Data> listenerMetricTreeMaps){
-    String filePath = "C:\\Users\\Owner\\Documents\\PluginFiles";
+    String filePath = bluejInstance.getSystemLibDir().getParentFile().getPath();
     ReportGenerationContext jsonContext = new ReportGenerationContext();
     ReportGenerationContext pdfContext = new ReportGenerationContext();
 

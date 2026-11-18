@@ -75,14 +75,12 @@ public class TableGenerator {
         if(row == 1 && col == 0){
          printSpacerBar(content1, largetsStringLenght,columnValues,coloumNames);
         }
-        System.out.println("Coloum val: "+getColoumLenght(columnValues, coloumNames)[col]+ " * 6: "+ getColoumLenght(columnValues, coloumNames)[col] * 6);
+
         tableMovingXValue += (getColoumLenght(columnValues, coloumNames)[col] * 6 )+54;
-        //if(col + 1 != numberOfColumns){
           currentCol++;
           content1.endText();
           content1.beginText();
           content1.newLineAtOffset(tableMovingXValue, tableMovingYValue);
-        //}
       
       }
 
@@ -186,7 +184,6 @@ public class TableGenerator {
         }
         
       }else{
-        //coloumLenghts[i] = headings[i].length();
         if(headings[i].length() > 13){
           coloumLenghts[i] = headings[i].length();
         }else{

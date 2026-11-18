@@ -19,6 +19,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.time.SimpleTimePeriod;
 
 import plugin.Data;
+import plugin.Iterators.java.TreeMapTraverser;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

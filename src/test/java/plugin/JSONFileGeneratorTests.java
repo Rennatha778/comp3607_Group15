@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import plugin.FileGenerators.java.JSONFileGenerator;
-import plugin.FileGenerators.java.TreeMapTraverser;
+import plugin.Iterators.java.TreeMapTraverser;
 
 import org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;

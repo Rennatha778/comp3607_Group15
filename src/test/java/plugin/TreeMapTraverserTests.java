@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions.*;
 import org.w3c.dom.events.Event;
 
-import plugin.FileGenerators.java.TreeMapTraverser;
+import plugin.Iterators.java.TreeMapTraverser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
