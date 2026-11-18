@@ -152,7 +152,10 @@ public class PDFFileGenerator implements ReportGenerationStrategy {
 
       String[] ratioHeadings = {"Metrics","Ratio"};
       String[] ratioMetricNames = {"Total_Idle_Time","Total_Active_Time"};
-      Object[] ratioValues = {4,5};
+      long activeRatio = (long)treeMapTraverser.getMetricValue(dataTreeMap,"Total_Active_Time");
+      long idleRatio = (long)treeMapTraverser.getMetricValue(dataTreeMap,"Total_Idle_Time");
+
+      Object[] ratioValues = {String.format("%.2f",(double)idleRatio/(idleRatio+activeRatio)),String.format("%.2f",(double)activeRatio/(idleRatio+activeRatio))};
       Object[] ratioColoumValues = {ratioMetricNames,ratioValues};
       newYValue = tableGenerator.generateTable(ratioHeadings,ratioColoumValues,ratioMetricNames.length,pageContent1,50,newYValue-55);
     }catch(IOException e){
