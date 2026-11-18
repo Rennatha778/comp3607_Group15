@@ -35,7 +35,6 @@ public class TableGenerator {
      * the headings
      */
     int largetsStringLenght = getLargestStringLenght((String[])columnValues[0]);
-  
     try{
       int row, col, currentCol;
       content1.beginText();
@@ -76,32 +75,44 @@ public class TableGenerator {
         if(row == 1 && col == 0){
          printSpacerBar(content1, largetsStringLenght,columnValues,coloumNames);
         }
-        
-        tableMovingXValue += getColoumLenght(columnValues, coloumNames)[col] * 6 + 12;
-        if(col+1 != numberOfColumns){
+        System.out.println("Coloum val: "+getColoumLenght(columnValues, coloumNames)[col]+ " * 6: "+ getColoumLenght(columnValues, coloumNames)[col] * 6);
+        tableMovingXValue += (getColoumLenght(columnValues, coloumNames)[col] * 6 )+54;
+        //if(col + 1 != numberOfColumns){
           currentCol++;
           content1.endText();
           content1.beginText();
           content1.newLineAtOffset(tableMovingXValue, tableMovingYValue);
-        }
+        //}
       
       }
 
-      if(row != 1)
-      //content1.newLineAtOffset(tableMovingXValue + 12, tableMovingYValue);
-      content1.showText("  |");
+      if(row != 1){
+        content1.endText();
+        content1.beginText();
+        content1.newLineAtOffset(xValue , tableMovingYValue);
+        for(int i = 0; i < getSpacingBarLenght(columnValues,tableHeadings); i++){
+          if(i < getSpacingBarLenght(columnValues,tableHeadings)-1){
+            content1.showText(" ");
+          }else{
+            content1.showText("|");
+          }
+        }
+        
+      }
       content1.endText();
       content1.beginText();
       
-      content1.newLineAtOffset(pageXValue, pageYValue - ((row + 1)* 15));
-      tableMovingYValue = pageYValue - (row + 1)* 15;
-      tableMovingXValue = pageXValue;
+        content1.newLineAtOffset(pageXValue, pageYValue - ((row + 1)* 15));
+        tableMovingYValue = pageYValue - (row + 1)* 15;
+        tableMovingXValue = pageXValue;
+      
+      
     }
 
     content1.endText();
     content1.beginText();
     
-    content1.newLineAtOffset(pageXValue, tableMovingYValue - 10);
+    content1.newLineAtOffset(pageXValue, tableMovingYValue);
     printSpacerBar(content1,largetsStringLenght,columnValues, coloumNames);
     content1.endText();
 
@@ -135,7 +146,7 @@ public class TableGenerator {
     //- (4 * headings.length) - (5 * colValues.length) + 2
     int barLenght = getSpacingBarLenght(colValues,headings);
     try{
-      for(int i = 0; i < barLenght + 3 ; i ++){
+      for(int i = 0; i < barLenght ; i ++){
         content1.showText("-");
       }
     }catch(IOException e){
@@ -150,7 +161,7 @@ public class TableGenerator {
   public int getSpacingBarLenght(Object[] columnValues, String[] tableHeadings){
     int spacingBarLenght = 0;
     for(int lenght : getColoumLenght(columnValues, tableHeadings)){
-      spacingBarLenght += lenght;
+      spacingBarLenght += lenght+5;
     }
     return spacingBarLenght;
   }
@@ -169,13 +180,19 @@ public class TableGenerator {
     for(Object coloum : coloumValues){
       if(coloum instanceof String[]){
         if(getLargestStringLenght((String[])coloum) > headings[i].length()){
-          coloumLenghts[i] = getLargestStringLenght((String[])coloum) + 3;
+          coloumLenghts[i] = getLargestStringLenght((String[])coloum);
         }else{
-          coloumLenghts[i] = headings[i].length() + 3;
+          coloumLenghts[i] = headings[i].length();
         }
         
       }else{
-        coloumLenghts[i] = headings[i].length() + 3;
+        //coloumLenghts[i] = headings[i].length();
+        if(headings[i].length() > 13){
+          coloumLenghts[i] = headings[i].length();
+        }else{
+          coloumLenghts[i] = 13;
+        }
+        
       }
 
       i++;

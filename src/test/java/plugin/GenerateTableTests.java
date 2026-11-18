@@ -25,11 +25,11 @@ public class GenerateTableTests {
 
   @Test
   void TestForColumnLenght(){
-    assertEquals(15+3,testerTableGenerator.getColoumLenght(combinedColumns,headings)[1]);
+    assertEquals(15,testerTableGenerator.getColoumLenght(combinedColumns,headings)[1]);
   }
 
   @Test
   void TestForBarSpacing(){
-    assertEquals(15+3+22+3+15+3,testerTableGenerator.getSpacingBarLenght(combinedColumns,headings));
+    assertEquals(15+5+22+5+15+5,testerTableGenerator.getSpacingBarLenght(combinedColumns,headings));
   }
 }
