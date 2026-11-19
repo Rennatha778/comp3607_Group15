@@ -34,7 +34,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
     compileMetrics.addIntData("Number_of_Compile_Successful", getTotalCompileSuccessful());
     compileMetrics.addIntData("Number_of_'Expected'_Errors",getExpectedErrorCount());
     compileMetrics.addIntData("Number_of_'Symbol'_Errors",getSymbolErrorCount());
-    compileMetrics.addIntData("Number_of_'Unclosed'_Errors",getUnclodedErrorCount());
+    compileMetrics.addIntData("Number_of_'Unclosed'_Errors",getUnclosedErrorCount());
     compileMetrics.addIntData("Number_of_'Return'_Errors",getReturnErrorCount());
     compileMetrics.addIntData("Number_of_Other_Errors",getOtherErrorCount()); 
     compileMetrics.addIntData("Total Errors",getTotalErrorCount());
@@ -42,7 +42,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
     if(getTotalCompileFail() != 0 || getTotalCompileSuccessful() != 0)
       compileMetrics.addIntData("Approximate_Average_Compile_Time",calculateAverageCompileTime(getTotalCompileTime(),(getTotalCompileFail() + getTotalCompileSuccessful())));
 
-    if(totalCorrectionTime != 0 && totalNumError != 0)
+    if(totalCorrectionTime != 0 && totalCorrected != 0)
       compileMetrics.addIntData("Approximate_Average_Correction_Time",calculateAverageCorrectionTime(getTotalCorretionTime(),getTotalCorrected()));
     
     return compileMetrics;
@@ -58,7 +58,6 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   public void compileStarted(CompileEvent event){
     setStartCompileTime(System.currentTimeMillis());
     System.out.println("Compile started successfully.");
-    
   }
 
   /**
@@ -173,7 +172,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   public void incrementTotalSymbolErrorsCount(){this.symbolError++;}
   public void incrementTotalUnclosedErrorsCount(){this.unclosedError++;}
   public void incrementTotalReturnErrorsCount(){this.returnError++;}
-  public void incrementTotalOtherErrorsCount(){this.returnError++;}
+  public void incrementTotalOtherErrorsCount(){this.otherError++;}
   public void incrementTotalCorrected(){this.totalCorrected++;}
 
   public void setTotalCompileTime(long totalCompileTime){this.totalCompileTime = this.totalCompileTime + totalCompileTime;}
@@ -222,7 +221,7 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
   public int getTotalCompileFail(){return this.numCompileFailed;}
   public int getExpectedErrorCount(){return this.expectedErrors;}
   public int getSymbolErrorCount(){return this.symbolError;}
-  public int getUnclodedErrorCount(){return this.unclosedError;}
+  public int getUnclosedErrorCount(){return this.unclosedError;}
   public int getReturnErrorCount(){return this.returnError;}
   public int getOtherErrorCount(){return this.otherError;}
   public int getTotalCorrected(){return this.totalCorrected;}
@@ -233,10 +232,86 @@ public class CompileDataCollection implements CompileListener, BluejListeners {
    * @return Total count of error that occurred in the session
    */
   public int getTotalErrorCount(){
-    this.totalNumError = getExpectedErrorCount()+ getSymbolErrorCount()+getUnclodedErrorCount()
+    this.totalNumError = getExpectedErrorCount()+ getSymbolErrorCount()+getUnclosedErrorCount()
     +getReturnErrorCount()+getOtherErrorCount();
     return this.totalNumError;
   }
+
+    public int getNumCompileFailed() {return numCompileFailed;}
+
+
+  public void setNumCompileFailed(int numCompileFailed) {this.numCompileFailed = numCompileFailed;}
+
+
+  public int getNumCompileSuccessful() {return numCompileSuccessful;}
+
+
+  public void setNumCompileSuccessful(int numCompileSuccessful) {this.numCompileSuccessful = numCompileSuccessful;}
+
+
+  public int getExpectedErrors() {return expectedErrors;}
+
+
+  public void setExpectedErrors(int expectedErrors) {this.expectedErrors = expectedErrors;}
+
+
+  public int getSymbolError() {return symbolError;}
+
+
+  public void setSymbolError(int symbolError) {this.symbolError = symbolError;}
+
+
+  public int getUnclosedError() {return unclosedError;}
+
+
+  public void setUnclosedError(int unclosedError) {this.unclosedError = unclosedError;}
+
+
+  public int getReturnError() {return returnError;}
+
+
+  public void setReturnError(int returnError) {this.returnError = returnError;}
+
+
+  public int getOtherError() {return otherError;}
+
+
+  public void setOtherError(int otherError) {this.otherError = otherError;}
+
+
+  public int getTotalNumError() {return totalNumError;}
+
+
+  public void setTotalNumError(int totalNumError) {this.totalNumError = totalNumError;}
+
+
+  public void setTotalCorrected(int totalCorrected) {this.totalCorrected = totalCorrected;}
+
+
+  public long getCompileStartTime() {return compileStartTime;}
+
+
+  public void setCompileStartTime(long compileStartTime) {this.compileStartTime = compileStartTime;}
+
+
+  public long getCompileEndTime() {return compileEndTime;}
+
+
+  public void setCompileEndTime(long compileEndTime) {this.compileEndTime = compileEndTime;}
+
+
+  public long getErrorFixStartTime() {return errorFixStartTime;}
+
+
+  public void setErrorFixStartTime(long errorFixStartTime) {this.errorFixStartTime = errorFixStartTime;}
+
+  public long getErrorFixEndTime() {return errorFixEndTime;}
+
+  public void setErrorFixEndTime(long errorFixEndTime) {this.errorFixEndTime = errorFixEndTime;}
+
+  public long getTotalCorrectionTime() {return totalCorrectionTime;}
+
+  //public void setTotalCorrectionTime(long totalCorrectionTime) {this.totalCorrectionTime = totalCorrectionTime;}
 
   public long getCompileStartedTime(){return this.compileStartTime;}
   public long getCompileEndedTime(){return this.compileEndTime;}

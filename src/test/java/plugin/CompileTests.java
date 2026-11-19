@@ -4,17 +4,24 @@ import org.junit.jupiter.api.Assertions.*;
 import org.w3c.dom.events.Event;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import bluej.extensions2.event.ClassEvent;
+import bluej.extensions2.event.CompileEvent;
 import bluej.extensions2.event.PackageEvent;
 import bluej.extensions2.event.ClassEvent.EventType;
 import plugin.EventListeners.java.CompileDataCollection;
+import plugin.Iterators.java.TreeMapTraverser;
+import java.util.TreeMap;
 public class CompileTests {
   static CompileDataCollection testerCompileListener;
+  static TreeMapTraverser testerTreeMapTraverser;
   @BeforeEach 
   void setup(){
+    testerTreeMapTraverser = new TreeMapTraverser();
     testerCompileListener = new CompileDataCollection();
   }
 
@@ -95,10 +102,34 @@ public class CompileTests {
  
 
   @Test
-  void TestForUpdateErrorCount(){
+  void TestForUpdateErrorCountExpected(){
     testerCompileListener.updateErrorCount("expected");
     testerCompileListener.updateErrorCount("expected");
     assertEquals(2,testerCompileListener.getExpectedErrorCount());
+  }
+
+  @Test
+  void TestForUpdateErrorCountSymbol(){
+    testerCompileListener.updateErrorCount("symbol");
+    assertEquals(1,testerCompileListener.getSymbolErrorCount());
+  }
+
+  @Test
+  void TestForUpdateErrorCountUnclosed(){
+    testerCompileListener.updateErrorCount("unclosed");
+    assertEquals(1,testerCompileListener.getUnclosedErrorCount());
+  }
+
+  @Test
+  void TestForUpdateErrorCountReturn(){
+    testerCompileListener.updateErrorCount("return");
+    assertEquals(1,testerCompileListener.getReturnErrorCount());
+  }
+
+  @Test
+  void TestForUpdateErrorCountOther(){
+    testerCompileListener.updateErrorCount("other");
+    assertEquals(1,testerCompileListener.getOtherErrorCount());
   }
 
   @Test
@@ -226,4 +257,96 @@ public class CompileTests {
 
     assertEquals(626,testerCompileListener.calculateAverageCorrectionTime(testerCompileListener.getTotalCorretionTime(), testerCompileListener.getTotalCorrected()));
   }
+
+  @Test
+  void TestForSessionStartTimeRunning(){
+    testerCompileListener.compileStarted(null);
+  }
+
+  @Test
+  void TestForGetMetricData(){
+    testerCompileListener.incrementNumCompileFailed();
+    testerCompileListener.incrementNumCompileFailed();
+    testerCompileListener.incrementNumCompileFailed();
+    TreeMap<String,Data> testerTreeMap = new TreeMap<String,Data>();
+    testerTreeMap.put("Tester_Compile_Tree_Map",testerCompileListener.getMetricData());
+    assertEquals(3,testerTreeMapTraverser.getMetricValue(testerTreeMap,"Number_of_Compile_Failed"));
+  }
+
+  @Test
+  void TestForGetMetricDataAverageCompileTime(){
+    testerCompileListener.setTotalCompileTime(1000);
+    testerCompileListener.setNumCompileSuccessful(2);
+
+    TreeMap<String,Data> testerTreeMap = new TreeMap<String,Data>();
+    testerTreeMap.put("Tester_Compile_Tree_Map",testerCompileListener.getMetricData());
+    assertEquals(500,testerTreeMapTraverser.getMetricValue(testerTreeMap,"Approximate_Average_Compile_Time"));
+  }
+
+  @Test
+  void TestForGetMetricDataAverageCorrectionTime(){
+    testerCompileListener.setTotalCorrectionTime(1000,2000);
+    testerCompileListener.setTotalCorrected(1);
+    
+    TreeMap<String,Data> testerTreeMap = new TreeMap<String,Data>();
+    testerTreeMap.put("Tester_Compile_Tree_Map",testerCompileListener.getMetricData());
+    assertEquals(1000,testerTreeMapTraverser.getMetricValue(testerTreeMap,"Approximate_Average_Correction_Time"));
+  }
+
+  @Test
+  void TestForGetMetricDataAverageCorrectionTimeIsNull(){
+    testerCompileListener.setTotalCorrectionTime(1000,2000);
+    
+    TreeMap<String,Data> testerTreeMap = new TreeMap<String,Data>();
+    testerTreeMap.put("Tester_Compile_Tree_Map",testerCompileListener.getMetricData());
+    assertNull(testerTreeMapTraverser.getMetricValue(testerTreeMap,"Approximate_Average_Correction_Time"));
+  }
+
+  @Test
+  void testForGetterTotalNumError(){
+    testerCompileListener.setTotalNumError(5);
+    assertEquals(5,testerCompileListener.getTotalNumError());
+  }
+
+  @Test
+  void testForGetterTotalNum(){
+    testerCompileListener.setErrorFixEndTime((long)2000);
+    assertEquals(2000,testerCompileListener.getErrorFixEndTime());
+  }
+
+  @Test
+  void testForGetterErrorFixEndTime(){
+    testerCompileListener.setErrorFixEndTime((long)2000);
+    assertEquals(2000,testerCompileListener.getErrorFixEndTime());
+  }
+
+  @Test
+  void testForGetterErrorFixStartTime(){
+    testerCompileListener.setErrorFixStartTime((long)3000);
+    assertEquals(3000,testerCompileListener.getErrorFixStartTime());
+  }
+
+  @Test
+  void testForGetterSetStartCompileTime(){
+    testerCompileListener.setStartCompileTime((long)1000);
+    assertEquals(1000,testerCompileListener.getCompileStartTime());
+  }
+
+  @Test
+  void testForGetterSetEndCompileTime(){
+    testerCompileListener.setEndCompileTime((long)1000);
+    assertEquals(1000,testerCompileListener.getCompileEndTime());
+  }
+
+  @Test
+  void testForGetterOtherError(){
+    testerCompileListener.setOtherError(20);
+    assertEquals(20,testerCompileListener.getOtherError());
+  }
+
+  @Test 
+  void compileTest(){
+    testerCompileListener.compileSucceeded(null);
+  }
+
 }

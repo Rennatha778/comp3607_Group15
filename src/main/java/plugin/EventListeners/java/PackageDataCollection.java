@@ -1,5 +1,7 @@
 package plugin.EventListeners.java;
 
+import java.util.TreeMap;
+
 import bluej.extensions2.event.PackageEvent;
 import bluej.extensions2.event.PackageListener;
 import plugin.Data;
@@ -12,7 +14,6 @@ import plugin.Data;
 public class PackageDataCollection implements PackageListener, BluejListeners{
   int numPackagesOpened = 0;
   int numPackagesClosed = 0;
- 
 
   public Data getMetricData(){
     Data packageMetrics = new Data();
@@ -21,6 +22,7 @@ public class PackageDataCollection implements PackageListener, BluejListeners{
 
     return packageMetrics;
   }
+
 
   @Override 
   /**

@@ -23,6 +23,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   long idleTypeTime = 0;
   long prevTypedTime = 0;
   long currTypedTime = 0;
+  int editFrequency = 0;
   /**
    * Variable used to store the open editior of a class
    */
@@ -109,7 +110,14 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * @param classEvent BlueJ class event that occurred
    */
   private synchronized void classModified(Long timeModified, ClassEvent classEvent){
-    modifiedClassesTreeMap.put(classEvent.getBClass().getName(),timeModified);
+    if(!modifiedClassesTreeMap.containsKey(classEvent.getBClass().getName())){
+      modifiedClassesTreeMap.put(classEvent.getBClass().getName(),(long)1);
+    }else{
+      long currentCount = modifiedClassesTreeMap.get(classEvent.getBClass().getName());
+
+      modifiedClassesTreeMap.put(classEvent.getBClass().getName(),currentCount+1);
+    }
+    
     System.out.println("Modified class:"+classEvent.getBClass().getName());
   }
 
@@ -124,10 +132,11 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
   @Override 
   public synchronized void classStateChanged(ClassEvent classEvent){
     currTypedTime = System.currentTimeMillis();
-      if(!classCreated(currTypedTime,classEvent)){
+      classCreated(currTypedTime,classEvent);
+      
+      if(trackTypeTime(classEvent)){
         classModified(currTypedTime,classEvent);
       }
-      trackTypeTime(classEvent);
       
       System.out.println("Class changes event ");
       
@@ -142,7 +151,7 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
    * counted as active typing time. The classModified method is also called.
    * @param classEvent BlueJ class event that occurred
    */
-  private void trackTypeTime(ClassEvent classEvent){
+  private boolean trackTypeTime(ClassEvent classEvent){
     try{
       if(classEvent.getBClass().getJavaEditorIfOpen() != null){
         currClassEditor = classEvent.getBClass().getJavaEditorIfOpen();
@@ -156,9 +165,11 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
           idleTypeTime = idleTypeTime + typeTime;
         }
         classModified(System.currentTimeMillis(),classEvent);
+        editFrequency++;
       }
       prevTypedCount = currTypedCount;
       prevTypedTime = currTypedTime;
+      return true;
      }
         
     }catch(ProjectNotOpenException e){
@@ -166,6 +177,6 @@ public class ClassDataCollection implements ClassListener, BluejListeners{
     }catch(PackageNotFoundException e){
       System.err.println("PACKAGE NOT OPENED!");
     }
-      
+    return false;
   }
 }

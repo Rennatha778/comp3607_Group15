@@ -110,4 +110,7 @@ public class MainEventDataCollection implements  ExtensionEventListener, BluejLi
     return mainExtentionCaterMetrics;
   }
 
+  public long getTotalSessionTime(){return this.totalSessionTime;}
+  
+
 }
