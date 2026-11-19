@@ -128,7 +128,7 @@ public class PDFFileGenerator implements ReportGenerationStrategy {
       pageContent1.endText();
       
       String[] headings = {"Metric Name", "Metric Value"};
-      String[] metricNames = {"Total_Active_Time","Total_Idle_Time","Total_Session_Time","Total_Active_Typing_Time","Total_Idle_Typing_Time","Average_Compile_Time","Number_of_Methods_Ran","Number_of_Packages_Opened"};
+      String[] metricNames = {"Total_Active_Time","Total_Idle_Time","Total_Session_Time","Total_Active_Typing_Time","Total_Idle_Typing_Time","Approximate_Average_Compile_Time","Number_of_Methods_Ran","Number_of_Packages_Opened"};
       Object[] metricValues = new Object[metricNames.length];
       metricValues = getMetricValues(metricNames);
       Object[] combinedArray = {metricNames,metricValues};
